@@ -7,14 +7,20 @@ This is done to make it easier to manage multiple wordpress sites on multiple se
 
 ## Master server install
 
-Install prerequisites:
+Docker is the easiest way to install the master server.
 
 ```
-chmod +x install.sh
-./install.sh
+docker run -d -p 5000:5000 -e LICENCE-API=your-api-key -e WORKER_KEY=your-api-key --name hnshosting-master git.woodburn.au/nathanwoodburn/hnshosting-master:latest -v ./data:/data
 ```
+You can also mount a docker volume to /data to store the files instead of mounting a host directory.
 
-This will create the service to run the master server.
+Alternatively you can install it manually.
+Set your .env file.
+```
+cd master
+python3 -m pip install -r requirements.txt
+python3 main.py
+```
 
 
 ## Worker server install

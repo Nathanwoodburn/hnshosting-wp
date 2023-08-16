@@ -20,7 +20,7 @@ def add_license():
     licence_key = os.urandom(16).hex()
 
     # Add license key to file
-    key_file = open('licence_key.txt', 'a')
+    key_file = open('/data/licence_key.txt', 'a')
     key_file.write(licence_key + '\n')
     key_file.close()
 
@@ -38,7 +38,7 @@ def new_site():
         return jsonify({'error': 'Invalid API key or domain', 'success': 'false'})
 
     # Check if API key is a valid site key
-    if api_key not in open('licence_key.txt', 'r').read():
+    if api_key not in open('/data/licence_key.txt', 'r').read():
         return jsonify({'error': 'Invalid API key', 'success': 'false'})
     
     # Check if domain already exists
@@ -53,7 +53,7 @@ def new_site():
     # Check if worker file exists
     workers = None
     try:
-        worker_file = open('workers.txt', 'r')
+        worker_file = open('/data/workers.txt', 'r')
         workers = worker_file.readlines()
         worker_file.close()
     except FileNotFoundError:
@@ -74,15 +74,15 @@ def new_site():
 
 
     # Add domain to file
-    sites_file = open('sites.txt', 'a')
+    sites_file = open('/data/sites.txt', 'a')
     sites_file.write(domain + ':' + worker.split(':')[0] + '\n')
     sites_file.close()
 
     # Use key
-    key_file = open('licence_key.txt', 'r')
+    key_file = open('/data/licence_key.txt', 'r')
     lines = key_file.readlines()
     key_file.close()
-    key_file = open('licence_key.txt', 'w')
+    key_file = open('/data/licence_key.txt', 'w')
     for line in lines:
         if line.strip("\n") != api_key:
             key_file.write(line)
@@ -108,11 +108,11 @@ def add_worker():
     
     # Check worker file
     try:
-        workers_file = open('workers.txt', 'r')
+        workers_file = open('/data/workers.txt', 'r')
     except FileNotFoundError:
-        workers_file = open('workers.txt', 'w')
+        workers_file = open('/data/workers.txt', 'w')
         workers_file.close()
-        workers_file = open('workers.txt', 'r')
+        workers_file = open('/data/workers.txt', 'r')
     
     # Check if worker already exists
     if worker in workers_file.read():
@@ -121,7 +121,7 @@ def add_worker():
     workers_file.close()
 
     # Add worker to file
-    workers_file = open('workers.txt', 'a')
+    workers_file = open('/data/workers.txt', 'a')
     workers_file.write(worker + ":" + worker_IP + '\n')
     workers_file.close()
 
@@ -136,11 +136,11 @@ def add_worker():
 def get_sites_count():
     # If file doesn't exist, create it
     try:
-        sites_file = open('sites.txt', 'r')
+        sites_file = open('/data/sites.txt', 'r')
     except FileNotFoundError:
-        sites_file = open('sites.txt', 'w')
+        sites_file = open('/data/sites.txt', 'w')
         sites_file.close()
-        sites_file = open('sites.txt', 'r')
+        sites_file = open('/data/sites.txt', 'r')
     num=len(sites_file.readlines())
     sites_file.close()
     # Return number of lines in file
@@ -149,11 +149,11 @@ def get_sites_count():
 def site_exists(domain):
     # If file doesn't exist, create it
     try:
-        sites_file = open('sites.txt', 'r')
+        sites_file = open('/data/sites.txt', 'r')
     except FileNotFoundError:
-        sites_file = open('sites.txt', 'w')
+        sites_file = open('/data/sites.txt', 'w')
         sites_file.close()
-        sites_file = open('sites.txt', 'r')
+        sites_file = open('/data/sites.txt', 'r')
 
     contains_site = False
     for line in sites_file.readlines():
@@ -167,11 +167,11 @@ def site_exists(domain):
 def site_worker(domain):
     # If file doesn't exist, create it
     try:
-        sites_file = open('sites.txt', 'r')
+        sites_file = open('/data/sites.txt', 'r')
     except FileNotFoundError:
-        sites_file = open('sites.txt', 'w')
+        sites_file = open('/data/sites.txt', 'w')
         sites_file.close()
-        sites_file = open('sites.txt', 'r')
+        sites_file = open('/data/sites.txt', 'r')
 
     worker = None
     for line in sites_file.readlines():
