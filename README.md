@@ -25,3 +25,9 @@ Install prerequisites:
 chmod +x install.sh
 ./install.sh
 ```
+
+Add worker to master server:
+
+```
+curl -X POST http://master-server-ip:5000/add-worker?worker=worker-name&ip=worker-server-ip -H "key: api-key"
+```

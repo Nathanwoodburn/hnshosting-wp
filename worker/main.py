@@ -26,6 +26,20 @@ def new_site():
     # Return the domain and the number of sites
     return jsonify({'domain': domain, 'count': count})
 
+# Return status
+@app.route('/status', methods=['GET'])
+def status():
+    num_Sites = get_sites_count()
+
+    availability=(num_Sites < int(os.getenv('MAX_SITES')))
+    return jsonify({'availability': availability, 'num_sites': num_Sites})
+
+
+# Ping status
+@app.route('/ping')
+def ping():
+    return 'pong'
+
 def get_sites_count():
     # If file doesn't exist, create it
     try:
@@ -34,7 +48,7 @@ def get_sites_count():
         sites_file = open('sites.txt', 'w')
         sites_file.close()
         sites_file = open('sites.txt', 'r')
-
+    print(sites_file.readlines())
     # Return number of lines in file
     return len(sites_file.readlines())
 
