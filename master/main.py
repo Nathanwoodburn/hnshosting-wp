@@ -181,8 +181,11 @@ def tlsa():
     if worker == None:
         return jsonify({'error': 'Domain does not exist', 'success': 'false'})
     
+    # Get worker ip
+    ip = workerIP(worker)
+
     # Get TLSA record
-    resp=requests.get("http://"+worker + ":5000/tlsa?domain=" + domain,timeout=2)
+    resp=requests.get("http://"+ip + ":5000/tlsa?domain=" + domain,timeout=2)
 
 
     return resp.json()
@@ -235,6 +238,25 @@ def site_worker(domain):
 
     sites_file.close()
     return worker
+
+def workerIP(worker):
+    # If file doesn't exist, create it
+    try:
+        workers_file = open('/data/workers.txt', 'r')
+    except FileNotFoundError:
+        workers_file = open('/data/workers.txt', 'w')
+        workers_file.close()
+        workers_file = open('/data/workers.txt', 'r')
+
+    ip = None
+    for line in workers_file.readlines():
+        if worker == line.split(':')[0]:
+            ip = line.split(':')[1].strip('\n')
+            break
+
+    workers_file.close()
+    return ip
+    
         
 
 # Start the server
