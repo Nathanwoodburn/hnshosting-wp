@@ -161,7 +161,7 @@ def list_workers():
             online=False
             worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': 0, 'ready': 0})
             continue
-        sites = resp.json()['sites']
+        sites = resp.json()['num_sites']
         worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': sites, 'ready': 1})
         
     return jsonify({'success': 'true', 'workers': worker_list})
