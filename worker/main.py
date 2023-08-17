@@ -3,6 +3,7 @@
 from flask import Flask, request, jsonify
 import dotenv
 import os
+import threading
 
 dotenv.load_dotenv()
 
@@ -25,7 +26,9 @@ def new_site():
     sites_file.close()
 
     # New site in background
-    new_site(domain,5000+count)
+    thread = threading.Thread(target=new_site, args=(domain, 5000 + count))
+    thread.start()
+
 
     # Return the domain and the number of sites
     return jsonify({'domain': domain, 'count': count})
