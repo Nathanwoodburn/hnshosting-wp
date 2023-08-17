@@ -48,7 +48,7 @@ def tlsa():
         return jsonify({'error': 'TLSA record not found', 'success': 'false'})
 
     # Remove newlines
-    tlsa = tlsa.replace('\n', '')
+    tlsa = tlsa[0].strip('\n')
     return jsonify({'domain': domain, 'tlsa': tlsa})
 
 
