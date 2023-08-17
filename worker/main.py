@@ -22,10 +22,11 @@ def new_site():
     # Add site to file
     sites_file = open('sites.txt', 'a')
     sites_file.write(domain + '\n')
+    sites_file.close()
 
     # Setup site run wp.sh
     # Get num sites
-    os.system('bash wp.sh ' + domain + ' '+ count)
+    os.system('bash wp.sh ' + domain + ' '+ str(count))
 
     # Return the domain and the number of sites
     return jsonify({'domain': domain, 'count': count})
