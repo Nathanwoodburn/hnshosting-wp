@@ -24,12 +24,23 @@ def new_site():
     sites_file.write(domain + '\n')
     sites_file.close()
 
-    # Setup site run wp.sh
-    # Get num sites
-    os.system('bash wp.sh ' + domain + ' '+ str(count))
+    # New site in background
+    new_site(domain,5000+count)
 
     # Return the domain and the number of sites
     return jsonify({'domain': domain, 'count': count})
+
+@app.route('/tlsa', methods=['GET'])
+def tlsa():
+    domain = request.args.get('domain')
+    if domain == None:
+        return jsonify({'error': 'Invalid domain', 'success': 'false'})
+    script = 'bash tlsa.sh ' + domain
+    # Get output from script
+    tlsa = os.popen(script).read()
+
+    return jsonify({'domain': domain, 'tlsa': tlsa})
+
 
 # Return status
 @app.route('/status', methods=['GET'])
@@ -71,6 +82,10 @@ def site_exists(domain):
         return True
     else:
         return False
+    
+async def new_site(domain,port):
+    script = 'bash wp.sh ' + domain + ' '+ str(port)
+    os.system(script)
 
 # Start the server
 if __name__ == '__main__':

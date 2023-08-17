@@ -21,4 +21,4 @@ sudo apt install nginx -y
 sudo apt install python3-pip -y
 python3 -m pip install -r requirements.txt
 cp .env.example .env
-chmod +x wp.sh
+chmod +x wp.sh tlsa.sh

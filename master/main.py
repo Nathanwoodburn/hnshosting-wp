@@ -166,6 +166,26 @@ def list_workers():
         
     return jsonify({'success': 'true', 'workers': worker_list})
 
+@app.route('/tlsa', methods=['GET'])
+def tlsa():
+    domain = request.args.get('domain')
+    if domain == None:
+        return jsonify({'error': 'Invalid domain', 'success': 'false'})
+    
+    # Check if domain exists
+    if not site_exists(domain):
+        return jsonify({'error': 'Domain does not exist', 'success': 'false'})
+    
+    # Get worker
+    worker = site_worker(domain)
+    if worker == None:
+        return jsonify({'error': 'Domain does not exist', 'success': 'false'})
+    
+    # Get TLSA record
+    resp=requests.get("http://"+worker + ":5000/tlsa?domain=" + domain,timeout=2)
+
+
+    return resp.json()
 
 def get_sites_count():
     # If file doesn't exist, create it
