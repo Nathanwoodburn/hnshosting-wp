@@ -9,7 +9,6 @@
 # [port offset] is the offset you want to use for the port numbers.
 # This is used if you want to run multiple instances of WordPress on the same server. (e.g. 0, 1, 2, 3, etc.)
 
-
 # Variables
 # Set the domain name
 
@@ -74,9 +73,6 @@ volumes:
 # Start the containers
 docker-compose up -d
 
-# Create the NGINX
-sudo apt install nginx -y
-
 URL="http://localhost:$WORDPRESS_PORT"
 
 # Setup NGINX config
@@ -118,7 +114,6 @@ echo "Add this TLSA Record to your DNS:"
 echo -n "3 1 1 " && openssl x509 -in cert.crt -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | xxd  -p -u -c 32
 
 # Save TLSA to file
-echo "Add this TLSA Record to your DNS:" > tlsa.txt
 echo -n "3 1 1 " >> tlsa.txt
 echo -n "" && openssl x509 -in cert.crt -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | xxd  -p -u -c 32 >> tlsa.txt
 

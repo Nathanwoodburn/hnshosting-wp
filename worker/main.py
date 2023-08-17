@@ -38,9 +38,14 @@ def tlsa():
     domain = request.args.get('domain')
     if domain == None:
         return jsonify({'error': 'Invalid domain', 'success': 'false'})
-    script = 'bash tlsa.sh ' + domain
-    # Get output from script
-    tlsa = os.popen(script).read()
+    
+    tlsa = None
+    try:
+        tlsa_file = open('wordpress-'+domain+'/tlsa.txt', 'r')
+        tlsa = tlsa_file.readlines()
+        tlsa_file.close()
+    except FileNotFoundError:
+        return jsonify({'error': 'TLSA record not found', 'success': 'false'})
 
     return jsonify({'domain': domain, 'tlsa': tlsa})
 
