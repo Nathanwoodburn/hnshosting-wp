@@ -91,7 +91,7 @@ def site_exists(domain):
     else:
         return False
     
-async def new_site(domain,port):
+def new_site(domain,port):
     script = 'bash wp.sh ' + domain + ' '+ str(port)
     os.system(script)
 
