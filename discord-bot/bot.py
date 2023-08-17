@@ -38,6 +38,27 @@ async def listworkers(ctx):
     else:
         await ctx.response.send_message("You do not have permission to use this command",ephemeral=True)
 
+@tree.command(name="licence", description="Gets a licence key")
+async def license(ctx):
+    if ctx.author.id != ADMINID:
+        await ctx.response.send_message("You do not have permission to use this command",ephemeral=True)
+        return
+
+    r = requests.get(f"http://{Master_IP}:{Master_Port}/add-licence",headers={"key":os.getenv('LICENCE_KEY')})
+    if r.status_code == 200:
+        await ctx.response.send_message(r.text,ephemeral=True)
+    else:
+        await ctx.response.send_message(f"Error getting license\n" + r.text,ephemeral=True)
+
+@tree.command(name="createsite", description="Create a new WordPress site")
+async def createsite(ctx, domain: str, licence: str):
+    r = requests.get(f"http://{Master_IP}:{Master_Port}/create-site?domain={domain}",headers={"key":os.getenv('licence')})
+    if r.status_code == 200:
+        await ctx.response.send_message(r.text,ephemeral=False)
+    else:
+        await ctx.response.send_message(f"Error creating site\n" + r.text,ephemeral=False)
+
+
 # When the bot is ready
 @client.event
 async def on_ready():
@@ -46,4 +67,4 @@ async def on_ready():
     await tree.sync()
     await client.loop.create_task(client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over HNSHosting wordpress")))
 
-client.run(TOKEN)
+client.run(TOKEN)   
