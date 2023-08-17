@@ -132,6 +132,40 @@ def add_worker():
 
     return jsonify({'success': 'true', 'worker': worker, 'online': online})
 
+@app.route('/list-workers', methods=['GET'])
+def list_workers():
+    # Get API header
+    api_key = request.headers.get('key')
+    if api_key == None:
+        return jsonify({'error': 'Invalid API key', 'success': 'false'})
+    if api_key != os.getenv('WORKER_KEY'):
+        return jsonify({'error': 'Invalid API key', 'success': 'false'})
+    
+    # Check worker file
+    try:
+        workers_file = open('/data/workers.txt', 'r')
+    except FileNotFoundError:
+        workers_file = open('/data/workers.txt', 'w')
+        workers_file.close()
+        workers_file = open('/data/workers.txt', 'r')
+    
+    workers = workers_file.readlines()
+    workers_file.close()
+
+    worker_list = []
+    for worker in workers:
+        # Check worker status
+        online=True
+        resp=requests.get("http://"+worker.split(':')[1].strip('\n') + ":5000/status",timeout=2)
+        if (resp.status_code != 200):
+            online=False
+            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': 0, 'ready': 0})
+            continue
+        sites = resp.json()['sites']
+        worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': sites, 'ready': 1})
+        
+    return jsonify({'success': 'true', 'workers': worker_list})
+
 
 def get_sites_count():
     # If file doesn't exist, create it
