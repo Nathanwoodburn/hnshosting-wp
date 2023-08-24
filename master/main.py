@@ -275,10 +275,20 @@ def stripeapi():
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL(host, port, context=context) as server:
             server.login(user, password)
-            message = """\
+            message = """From: Hosting <""" + from_email + """>
+            To: """ + email + """
             Subject: Your Licence key
 
-            Your licence key is: """ + licence_key
+            Hello,
+            This email contains your licence key for your new wordpress site.
+            You can redeem this key via the discord bot or api.
+
+            Your licence key is: """ + licence_key + """
+
+            Thanks,
+            HNSHosting
+
+            """
 
             server.sendmail(from_email, email, message)
 
