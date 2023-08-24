@@ -25,9 +25,9 @@ jobs:
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           if [ tag = "main" ]; then
-            tag = "latest"
+            tag="latest"
           else
-            tag_num = $tag +"-"+ $tag_num
+            tag_num=$tag + "-" + $tag_num
           fi
 
           docker build -t hnshosting-master:$tag_num .
@@ -62,9 +62,9 @@ jobs:
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           if [ tag = "main" ]; then
-            tag = "latest"
+            tag="latest"
           else
-            tag_num = $tag +"-"+ $tag_num
+            tag_num=$tag + "-" + $tag_num
           fi
 
           docker build -t hnshosting-bot:$tag_num .
