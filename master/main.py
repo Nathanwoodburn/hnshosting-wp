@@ -275,7 +275,12 @@ def stripeapi():
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL(host, port, context=context) as server:
             server.login(user, password)
-            server.sendmail(from_email, email, "Your licence key is: " + licence_key)
+            message = """\
+            Subject: Your Licence key
+
+            Your licence key is: """ + licence_key
+
+            server.sendmail(from_email, email, message)
 
 
 
