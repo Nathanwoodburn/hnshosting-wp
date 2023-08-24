@@ -235,6 +235,10 @@ def tlsa():
 
 @app.route('/stripe', methods=['POST'])
 def stripe():
+     # Log all requests
+    print(request.json)
+    # Log for docker
+    print(request.json, flush=True)
     # Get API header
     api_key = request.headers.get('key')
     if api_key == None:
@@ -242,10 +246,7 @@ def stripe():
     if api_key != os.getenv('STRIPE_KEY'):
         return jsonify({'error': 'Invalid API key', 'success': 'false'})
     
-    # Log all requests
-    print(request.json)
-    # Log for docker
-    print(request.json, flush=True)
+   
 
     return jsonify({'success': 'true'})
 
