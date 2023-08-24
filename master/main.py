@@ -233,7 +233,7 @@ def tlsa():
     return resp.json()
 
 
-@app.route('stripe', methods=['POST'])
+@app.route('/stripe', methods=['POST'])
 def stripe():
     # Get API header
     api_key = request.headers.get('key')
