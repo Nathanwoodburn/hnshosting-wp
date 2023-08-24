@@ -234,20 +234,34 @@ def tlsa():
 
 
 @app.route('/stripe', methods=['POST'])
-def stripe():
-     # Log all requests
-    print(request.json)
-    # Log for docker
+def stripeapi():
     print(request.json, flush=True)
-    # Get API header
-    api_key = request.headers.get('key')
-    if api_key == None:
-        return jsonify({'error': 'Invalid API key', 'success': 'false'})
-    if api_key != os.getenv('STRIPE_KEY'):
-        return jsonify({'error': 'Invalid API key', 'success': 'false'})
-    
-   
+    print(request.headers, flush=True)
+    payload = request.data
+    stripe.api_key = os.getenv('STRIPE_SECRET')
+    endpoint_secret = os.getenv('STRIPE_ENDPOINT_SECRET')
+    sig_header = request.headers.get('HTTP_STRIPE_SIGNATURE')
+    events = None
+    try:
+        event = stripe.Webhook.construct_event(
+        payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+    # Invalid payload
+        return jsonify({'success': 'false'})
+    except stripe.error.SignatureVerificationError as e:
+        return jsonify({'success': 'false'})
 
+    # Handle the event
+    if event.type == 'payment_intent.succeeded':
+        payment_intent = event.data.object # contains a stripe.PaymentIntent
+        print('PaymentIntent was successful!', flush=True)
+    elif event.type == 'payment_method.attached':
+        payment_method = event.data.object # contains a stripe.PaymentMethod
+        print('PaymentMethod was attached to a Customer!', flush=True)
+    # ... handle other event types
+    else:
+        print('Unhandled event type {}'.format(event.type))
     return jsonify({'success': 'true'})
 
 
