@@ -155,12 +155,13 @@ def list_workers():
     # Check if there are any workers (by seeing if there are any :)
     if len(workers) == 0:
         return jsonify({'error': 'No workers available', 'success': 'false'})
-    if not workers.contains(':'):
-        return jsonify({'error': 'No workers available', 'success': 'false'})
 
     worker_list = []
     for worker in workers:
         # Check worker status
+        if not worker.__contains__(':'):
+            return jsonify({'error': 'No workers available', 'success': 'false'})
+
         online=True
         resp=requests.get("http://"+worker.split(':')[1].strip('\n') + ":5000/status",timeout=2)
         if (resp.status_code != 200):
