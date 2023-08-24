@@ -54,7 +54,7 @@ async def license(ctx):
             await ctx.response.send_message("You do not have permission to use this command",ephemeral=True)
             return
         
-    r = requests.get(f"http://{Master_IP}:{Master_Port}/add-licence",headers={"key":os.getenv('LICENCE_KEY')})
+    r = requests.post(f"http://{Master_IP}:{Master_Port}/add-licence",headers={"key":os.getenv('LICENCE_KEY')})
     if r.status_code == 200:
         await ctx.response.send_message(r.text,ephemeral=True)
     else:
