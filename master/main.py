@@ -65,6 +65,9 @@ def new_site():
     # Get a worker that has available slots
     worker = None
     for line in workers:
+        if not line.__contains__(':'):
+            continue
+
         ip = line.split(':')[1].strip('\n')
         resp=requests.get("http://"+ip + ":5000/status",timeout=2)
         if (resp.status_code == 200):
