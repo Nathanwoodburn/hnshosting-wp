@@ -65,7 +65,7 @@ async def license(ctx):
 
 @tree.command(name="createsite", description="Create a new WordPress site")
 async def createsite(ctx, domain: str, licence: str):
-    r = requests.post(f"http://{Master_IP}:{Master_Port}/new-site?domain={domain}",headers={"key":os.getenv('licence')})
+    r = requests.post(f"http://{Master_IP}:{Master_Port}/new-site?domain={domain}",headers={"key":licence})
     if r.status_code == 200:
         json = r.json()
         if json['success'] == "true":
