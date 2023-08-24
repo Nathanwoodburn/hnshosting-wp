@@ -64,7 +64,7 @@ jobs:
           if [ tag = "main" ]; then
             tag="latest"
           else
-            tag_num=$tag + "-" + $tag_num
+            tag_num="${tag}-${tag_num}"
           fi
 
           docker build -t hnshosting-bot:$tag_num .
