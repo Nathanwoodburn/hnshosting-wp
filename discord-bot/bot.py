@@ -41,7 +41,6 @@ async def listworkers(ctx):
                 await ctx.response.send_message(json['workers'],ephemeral=True)
             else:
                 await ctx.response.send_message(f"Error listing workers\n" + json['error'],ephemeral=True)
-            await ctx.response.send_message(r.text,ephemeral=True)
         else:
             await ctx.response.send_message(f"Error listing workers\n" + r.text,ephemeral=True)
     else:
@@ -56,7 +55,11 @@ async def license(ctx):
         
     r = requests.post(f"http://{Master_IP}:{Master_Port}/add-licence",headers={"key":os.getenv('LICENCE_KEY')})
     if r.status_code == 200:
-        await ctx.response.send_message(r.text,ephemeral=True)
+        json = r.json()
+        if json['success'] == "true":
+            await ctx.response.send_message(json['licence_key'])
+        else:
+            await ctx.response.send_message(f"Error getting license\n" + json['error'])
     else:
         await ctx.response.send_message(f"Error getting license\n" + r.text,ephemeral=True)
 
