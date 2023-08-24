@@ -23,12 +23,21 @@ jobs:
           echo "${{ secrets.DOCKERGIT_TOKEN }}" | docker login git.woodburn.au -u nathanwoodburn --password-stdin
           tag_num=$(git rev-parse --short HEAD)
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          if [ "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" = "master" ]; then
+            docker build -t hnshosting-master:$tag_num .
+            docker tag hnshosting-master:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-master:$tag_num
+            docker push git.woodburn.au/nathanwoodburn/hnshosting-master:$tag_num
+            docker tag hnshosting-master:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-master:latest
+            docker push git.woodburn.au/nathanwoodburn/hnshosting-master:latest
+          else
+            docker build -t hnshosting-master-dev:$tag_num .
+            docker tag hnshosting-master-dev:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-master-dev:$tag_num
+            docker push git.woodburn.au/nathanwoodburn/hnshosting-master-dev:$tag_num
+            docker tag hnshosting-master-dev:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-master-dev:latest
+            docker push git.woodburn.au/nathanwoodburn/hnshosting-master-dev:latest
+          fi
 
-          docker build -t hnshosting-master:$tag_num .
-          docker tag hnshosting-master:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-master:$tag_num
-          docker push git.woodburn.au/nathanwoodburn/hnshosting-master:$tag_num
-          docker tag hnshosting-master:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-master:latest
-          docker push git.woodburn.au/nathanwoodburn/hnshosting-master:latest
+          
 
   Build Bot:
     runs-on: ubuntu-latest
@@ -50,8 +59,16 @@ jobs:
           echo "${{ secrets.DOCKERGIT_TOKEN }}" | docker login git.woodburn.au -u nathanwoodburn --password-stdin
           tag_num=$(git rev-parse --short HEAD)
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          docker build -t hnshosting-bot:$tag_num .
-          docker tag hnshosting-bot:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag_num
-          docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag_num
-          docker tag hnshosting-bot:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-bot:latest
-          docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:latest
+          if [ "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" = "master" ]; then
+            docker build -t hnshosting-bot:$tag_num .
+            docker tag hnshosting-bot:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag_num
+            docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag_num
+            docker tag hnshosting-bot:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-bot:latest
+            docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:latest
+          else
+            docker build -t hnshosting-bot-dev:$tag_num .
+            docker tag hnshosting-bot-dev:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-bot-dev:$tag_num
+            docker push git.woodburn.au/nathanwoodburn/hnshosting-bot-dev:$tag_num
+            docker tag hnshosting-bot-dev:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-bot-dev:latest
+            docker push git.woodburn.au/nathanwoodburn/hnshosting-bot-dev:latest
+          fi
