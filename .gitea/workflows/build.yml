@@ -24,11 +24,13 @@ jobs:
           tag_num=$(git rev-parse --short HEAD)
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          tag=${tag//\//-}
           if [ tag = "main" ]; then
             tag="latest"
           else
             tag_num="${tag}-${tag_num}"
           fi
+          
 
           docker build -t hnshosting-master:$tag_num .
           docker tag hnshosting-master:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-master:$tag_num
@@ -61,6 +63,7 @@ jobs:
           tag_num=$(git rev-parse --short HEAD)
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          tag=${tag//\//-}
           if [ tag = "main" ]; then
             tag="latest"
           else
