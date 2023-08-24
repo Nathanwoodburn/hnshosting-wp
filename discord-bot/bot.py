@@ -18,7 +18,7 @@ tree = app_commands.CommandTree(client)
 
 @tree.command(name="addworker", description="Adds a worker to the master server")
 async def addworker(ctx, ip: str, name: str):
-    if ctx.author.id == ADMINID:
+    if ctx.user.id == ADMINID:
         r = requests.get(f"http://{Master_IP}:{Master_Port}/add-worker?worker={name}&ip={ip}",headers={"key":os.getenv('WORKER_KEY')})
         if r.status_code == 200:
             await ctx.response.send_message(f"Worker {name} added to the master server",ephemeral=True)
@@ -29,7 +29,7 @@ async def addworker(ctx, ip: str, name: str):
 
 @tree.command(name="listworkers", description="Lists all workers on the master server")
 async def listworkers(ctx):
-    if ctx.author.id == ADMINID:
+    if ctx.user.id == ADMINID:
         r = requests.get(f"http://{Master_IP}:{Master_Port}/list-workers",headers={"key":os.getenv('WORKER_KEY')})
         if r.status_code == 200:
             await ctx.response.send_message(r.text,ephemeral=True)
@@ -40,7 +40,7 @@ async def listworkers(ctx):
 
 @tree.command(name="licence", description="Gets a licence key")
 async def license(ctx):
-    if ctx.author.id != ADMINID:
+    if ctx.user.id != ADMINID:
         await ctx.response.send_message("You do not have permission to use this command",ephemeral=True)
         return
 
