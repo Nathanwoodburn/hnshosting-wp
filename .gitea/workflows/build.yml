@@ -25,7 +25,7 @@ jobs:
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           tag=${tag//\//-}
-          if [ tag = "main" ]; then
+          if [[ "$tag" == "main" ]]; then
             tag="latest"
           else
             tag_num="${tag}-${tag_num}"
@@ -64,7 +64,7 @@ jobs:
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           tag=${tag//\//-}
-          if [ tag = "main" ]; then
+          if [[ "$tag" == "main" ]]; then
             tag="latest"
           else
             tag_num="${tag}-${tag_num}"
