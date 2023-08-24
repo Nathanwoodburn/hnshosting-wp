@@ -82,7 +82,7 @@ async def siteinfo(ctx, domain: str):
     if r.status_code == 200:
         json = r.json()
         if json['success'] == "true":
-            await ctx.response.send_message(f"Site: {domain}\nStatus: {json['status']}\nWorker: {json['worker']}")
+            await ctx.response.send_message(f"Here is the site info for {json['domain']}\nIP: {json['ip']}\nTLSA: {json['tlsa']}")
         else:
             await ctx.response.send_message(f"Error getting site info\n" + json['error'])
     else:
