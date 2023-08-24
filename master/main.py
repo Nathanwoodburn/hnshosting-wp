@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 import dotenv
 import os
 import requests
+import stripe # For stripe payments
+import smtplib, ssl # For sending emails
 
 dotenv.load_dotenv()
 
@@ -231,6 +233,65 @@ def tlsa():
 
 
     return resp.json()
+
+
+@app.route('/stripe', methods=['POST'])
+def stripeapi():
+    payload = request.data
+    stripe.api_key = os.getenv('STRIPE_SECRET')
+    endpoint_secret = os.getenv('STRIPE_ENDPOINT_SECRET')
+    sig_header = request.headers.get('Stripe-Signature')
+    events = None
+    try:
+        event = stripe.Webhook.construct_event(
+        payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+    # Invalid payload
+        return jsonify({'success': 'false'})
+    except stripe.error.SignatureVerificationError as e:
+        return jsonify({'success': 'false'})
+
+    # Handle the event
+    if event.type == 'payment_intent.succeeded':
+        payment_intent = event.data.object
+        # Get email
+        email = payment_intent['receipt_email']
+        # Create licence key
+        licence_key = os.urandom(16).hex()
+        # Add licence key to file
+        key_file = open('/data/licence_key.txt', 'a')
+        key_file.write(licence_key + '\n')
+        key_file.close()
+        # Send email
+        host = os.getenv('SMTP_HOST')
+        port = os.getenv('SMTP_PORT')
+        user = os.getenv('SMTP_USER')
+        password = os.getenv('SMTP_PASS')
+        from_email = os.getenv('SMTP_FROM')
+        if from_email == None:
+            from_email = user
+        
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(host, port, context=context) as server:
+            server.login(user, password)
+            message = "From: Hosting <" + from_email + ">\nTo: " + email + \
+                "\nSubject: Your Licence key\n\nHello,\n\n"\
+                +"This email contains your licence key for your new wordpress site.\n" \
+                +"You can redeem this key via the discord bot or api.\n\n"\
+                +"Your licence key is: " + licence_key +"\nThanks,\nHNSHosting"
+
+            server.sendmail(from_email, email, message)
+
+
+
+        print('PaymentIntent was successful!', flush=True)
+    else:
+        print('Unhandled event type {}'.format(event.type))
+    return jsonify({'success': 'true'})
+
+
+
 
 def get_sites_count():
     # If file doesn't exist, create it
