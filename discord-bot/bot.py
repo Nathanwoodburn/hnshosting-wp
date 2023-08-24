@@ -57,7 +57,7 @@ async def license(ctx):
     if r.status_code == 200:
         json = r.json()
         if json['success'] == "true":
-            await ctx.response.send_message(json['licence_key'])
+            await ctx.response.send_message("Licence: "+json['licence_key'])
         else:
             await ctx.response.send_message(f"Error getting license\n" + json['error'])
     else:
@@ -65,11 +65,15 @@ async def license(ctx):
 
 @tree.command(name="createsite", description="Create a new WordPress site")
 async def createsite(ctx, domain: str, licence: str):
-    r = requests.get(f"http://{Master_IP}:{Master_Port}/create-site?domain={domain}",headers={"key":os.getenv('licence')})
+    r = requests.post(f"http://{Master_IP}:{Master_Port}/new-site?domain={domain}",headers={"key":os.getenv('licence')})
     if r.status_code == 200:
-        await ctx.response.send_message(r.text,ephemeral=False)
+        json = r.json()
+        if json['success'] == "true":
+            await ctx.response.send_message(f"Site {domain} creating...\nPlease send /siteinfo domain:{domain}")
+        else:
+            await ctx.response.send_message(f"Error creating site\n" + json['error'])
     else:
-        await ctx.response.send_message(f"Error creating site\n" + r.text,ephemeral=False)
+        await ctx.response.send_message(f"Error creating site\n" + r.text)
 
 
 # When the bot is ready
