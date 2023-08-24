@@ -23,7 +23,7 @@ tree = app_commands.CommandTree(client)
 @tree.command(name="addworker", description="Adds a worker to the master server")
 async def addworker(ctx, ip: str, name: str):
     if ctx.user.id == ADMINID:
-        r = requests.get(f"http://{Master_IP}:{Master_Port}/add-worker?worker={name}&ip={ip}",headers={"key":os.getenv('WORKER_KEY')})
+        r = requests.post(f"http://{Master_IP}:{Master_Port}/add-worker?worker={name}&ip={ip}",headers={"key":os.getenv('WORKER_KEY')})
         if r.status_code == 200:
             await ctx.response.send_message(f"Worker {name} added to the master server",ephemeral=True)
         else:
