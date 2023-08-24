@@ -26,7 +26,7 @@ def new_site():
     sites_file.close()
 
     # New site in background
-    thread = threading.Thread(target=new_site, args=(domain, 5000 + count))
+    thread = threading.Thread(target=new_site, args=(domain))
     thread.start()
 
 
@@ -93,8 +93,8 @@ def site_exists(domain):
     else:
         return False
     
-def new_site(domain,port):
-    script = 'bash wp.sh ' + domain + ' '+ str(port)
+def new_site(domain):
+    script = 'bash wp.sh ' + domain
     os.system(script)
 
 # Start the server

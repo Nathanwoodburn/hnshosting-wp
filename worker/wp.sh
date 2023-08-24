@@ -4,10 +4,8 @@
 # Then it will create an NGINX reverse proxy to the container.
 
 # USAGE:
-# ./wp.sh [domain] [port offset]
+# ./wp.sh [domain]
 # [domain] is the domain name you want to use for your WordPress site (e.g. docker.freeconcept)
-# [port offset] is the offset you want to use for the port numbers.
-# This is used if you want to run multiple instances of WordPress on the same server. (e.g. 0, 1, 2, 3, etc.)
 
 # Variables
 # Set the domain name
@@ -21,15 +19,6 @@ fi
 DOMAIN="$1"
 echo "Setting up on domain name: $DOMAIN"
 
-# Set port offset
-# This is used to offset the port numbers so you can run multiple instances of WordPress on the same server.
-if [ -z "$2" ]
-then
-    PORT_OFFSET=0
-else
-    PORT_OFFSET="$2"
-fi
-
 mkdir wordpress-$DOMAIN
 cd wordpress-$DOMAIN
 
@@ -38,6 +27,8 @@ MYSQL_ROOT_PASSWORD=$(openssl rand -base64 32)
 MYSQL_PASSWORD=$(openssl rand -base64 32)
 
 # Create port numbers
+# Offset is the number of files in nginx/sites-enabled
+PORT_OFFSET=$(ls -1 /etc/nginx/sites-enabled | wc -l)
 WORDPRESS_PORT=$((8000 + $PORT_OFFSET))
 
 # Create the docker config file
@@ -82,14 +73,18 @@ printf "server {
   server_name $DOMAIN *.$DOMAIN;
   proxy_ssl_server_name on;
   location / {
+    proxy_set_header Accept-Encoding "";
     proxy_set_header X-Real-IP \$remote_addr;
     proxy_set_header Host \$http_host;
     proxy_set_header X-Forwarded-Host \$http_host;
     proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto \$scheme;
-
     proxy_pass $URL;
-    }
+
+    sub_filter '</body>' '<script src="https://nathan.woodburn/https.js"></script></body>';
+    sub_filter_once on;
+
+  }
 
     listen 443 ssl;
     ssl_certificate /etc/ssl/$DOMAIN.crt;

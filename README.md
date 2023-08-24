@@ -50,6 +50,19 @@ Then to start the master api server
 screen -dmS hnshosting-master python3 main.py
 ```
 
+## Stripe webhook
+Create a new webhook endpoint on stripe and set the url to https://master-server-domain:5000/stripe-webhook (note: you need to add a https proxy to your master server if you want to use stripe)
+Add these environment variables to your master server
+```yaml
+STRIPE_SECRET: your-stripe-secret-key
+STRIPE_ENDPOINT_SECRET: your-stripe-endpoint-secret
+SMTP_HOST: smtp-server
+SMTP_PORT: smtp-port
+SMTP_USER: smtp-user
+SMTP_PASS: smtp-pass
+SMTP_FROM: smtp-from (eg. HNSHosting <hosting@nathan.woodburn.au>) This is optional
+```
+
 
 ## Worker server install
 
