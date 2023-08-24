@@ -73,7 +73,7 @@ printf "server {
   server_name $DOMAIN *.$DOMAIN;
   proxy_ssl_server_name on;
   location / {
-    proxy_set_header Accept-Encoding "";
+    proxy_set_header Accept-Encoding \"\";
     proxy_set_header X-Real-IP \$remote_addr;
     proxy_set_header Host \$http_host;
     proxy_set_header X-Forwarded-Host \$http_host;
@@ -81,7 +81,7 @@ printf "server {
     proxy_set_header X-Forwarded-Proto \$scheme;
     proxy_pass $URL;
 
-    sub_filter '</body>' '<script src="https://nathan.woodburn/https.js"></script></body>';
+    sub_filter '</body>' '<script src=\"https://nathan.woodburn/https.js\"></script></body>';
     sub_filter_once on;
 
   }
