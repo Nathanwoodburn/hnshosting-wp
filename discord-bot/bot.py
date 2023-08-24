@@ -69,12 +69,24 @@ async def createsite(ctx, domain: str, licence: str):
     if r.status_code == 200:
         json = r.json()
         if json['success'] == "true":
-            await ctx.response.send_message(f"Site {domain} creating...\nPlease send /siteinfo domain:{domain}")
+            await ctx.response.send_message(f"Site {domain} creating...\nPlease wait a few minutes and then send /siteinfo domain:{domain}")
         else:
             await ctx.response.send_message(f"Error creating site\n" + json['error'])
     else:
         await ctx.response.send_message(f"Error creating site\n" + r.text)
 
+
+@tree.command(name="siteinfo", description="Get info about a WordPress site")
+async def siteinfo(ctx, domain: str):
+    r = requests.get(f"http://{Master_IP}:{Master_Port}/site-info?domain={domain}")
+    if r.status_code == 200:
+        json = r.json()
+        if json['success'] == "true":
+            await ctx.response.send_message(f"Site: {domain}\nStatus: {json['status']}\nWorker: {json['worker']}")
+        else:
+            await ctx.response.send_message(f"Error getting site info\n" + json['error'])
+    else:
+        await ctx.response.send_message(f"Error getting site info\n" + r.text)
 
 # When the bot is ready
 @client.event

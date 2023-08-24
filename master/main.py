@@ -203,13 +203,9 @@ def site_status():
 
     if "tlsa" in json:
         tlsa = json['tlsa']
+        return jsonify({'success': 'true', 'domain': domain, 'ip': ip, 'tlsa': tlsa})
     else:
-        tlsa = "none"
-
-    # Return status
-
-
-    return jsonify({'success': 'true', 'domain': domain, 'ip': ip, 'tlsa': tlsa})
+        return jsonify({'success': 'false', 'domain': domain, 'ip': ip, 'tlsa': 'none','error': 'No TLSA record found'})
 
 
 @app.route('/tlsa', methods=['GET'])
