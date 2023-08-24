@@ -9,8 +9,8 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 ADMINID = 0
 Master_IP = os.getenv('MASTER_IP')
 Master_Port = os.getenv('MASTER_PORT')
-if Master_IP == None:
-    Master_IP = "5000"
+if Master_Port == None:
+    Master_Port = "5000"
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
