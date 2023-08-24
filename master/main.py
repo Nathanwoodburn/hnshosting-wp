@@ -34,8 +34,11 @@ def new_site():
     api_key = request.headers.get('key')
     
     # Verify both API key and domain exist
-    if api_key == None or domain == None:
-        return jsonify({'error': 'Invalid API key or domain', 'success': 'false'})
+    if api_key == None:
+        return jsonify({'error': 'Missing API key', 'success': 'false'})
+    
+    if domain == None:
+        return jsonify({'error': 'Missing domain', 'success': 'false'})
 
     # Check if API key is a valid site key
     if api_key not in open('/data/licence_key.txt', 'r').read():
