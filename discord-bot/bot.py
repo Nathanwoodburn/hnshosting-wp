@@ -12,6 +12,10 @@ Master_Port = os.getenv('MASTER_PORT')
 if Master_Port == None:
     Master_Port = "5000"
 
+FREE_LICENCE = os.getenv('FREE_LICENCE')
+if FREE_LICENCE == None:
+    FREE_LICENCE = False
+
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
@@ -32,6 +36,11 @@ async def listworkers(ctx):
     if ctx.user.id == ADMINID:
         r = requests.get(f"http://{Master_IP}:{Master_Port}/list-workers",headers={"key":os.getenv('WORKER_KEY')})
         if r.status_code == 200:
+            json = r.json()
+            if json['success'] == "true":
+                await ctx.response.send_message(json['workers'],ephemeral=True)
+            else:
+                await ctx.response.send_message(f"Error listing workers\n" + json['error'],ephemeral=True)
             await ctx.response.send_message(r.text,ephemeral=True)
         else:
             await ctx.response.send_message(f"Error listing workers\n" + r.text,ephemeral=True)
@@ -40,10 +49,11 @@ async def listworkers(ctx):
 
 @tree.command(name="licence", description="Gets a licence key")
 async def license(ctx):
-    if ctx.user.id != ADMINID:
-        await ctx.response.send_message("You do not have permission to use this command",ephemeral=True)
-        return
-
+    if ctx.user.id != ADMINID:        
+        if FREE_LICENCE == False: # If free licences are enabled then anyone can get a licence
+            await ctx.response.send_message("You do not have permission to use this command",ephemeral=True)
+            return
+        
     r = requests.get(f"http://{Master_IP}:{Master_Port}/add-licence",headers={"key":os.getenv('LICENCE_KEY')})
     if r.status_code == 200:
         await ctx.response.send_message(r.text,ephemeral=True)
