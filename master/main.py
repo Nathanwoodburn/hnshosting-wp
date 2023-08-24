@@ -152,8 +152,10 @@ def list_workers():
     workers = workers_file.readlines()
     workers_file.close()
 
-    # Check if there are any workers
+    # Check if there are any workers (by seeing if there are any :)
     if len(workers) == 0:
+        return jsonify({'error': 'No workers available', 'success': 'false'})
+    if not worker.contains(':'):
         return jsonify({'error': 'No workers available', 'success': 'false'})
 
     worker_list = []
