@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import dotenv
 import os
 import requests
+import stripe
 
 dotenv.load_dotenv()
 
@@ -240,7 +241,7 @@ def stripeapi():
     payload = request.data
     stripe.api_key = os.getenv('STRIPE_SECRET')
     endpoint_secret = os.getenv('STRIPE_ENDPOINT_SECRET')
-    sig_header = request.headers.get('HTTP_STRIPE_SIGNATURE')
+    sig_header = request.headers.get('Stripe-Signature')
     events = None
     try:
         event = stripe.Webhook.construct_event(
