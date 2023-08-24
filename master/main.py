@@ -155,7 +155,7 @@ def list_workers():
     # Check if there are any workers (by seeing if there are any :)
     if len(workers) == 0:
         return jsonify({'error': 'No workers available', 'success': 'false'})
-    if not worker.contains(':'):
+    if not workers.contains(':'):
         return jsonify({'error': 'No workers available', 'success': 'false'})
 
     worker_list = []
