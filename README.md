@@ -60,7 +60,7 @@ SMTP_HOST: smtp-server
 SMTP_PORT: smtp-port
 SMTP_USER: smtp-user
 SMTP_PASS: smtp-pass
-SMTP_FROM: smtp-from <Optional>
+SMTP_FROM: smtp-from (eg. HNSHosting <hosting@nathan.woodburn.au>) This is optional
 ```
 
 

@@ -251,8 +251,7 @@ def stripeapi():
         return jsonify({'success': 'false'})
     except stripe.error.SignatureVerificationError as e:
         return jsonify({'success': 'false'})
-
-    # Handle the event
+    
     if event.type == 'payment_intent.succeeded':
         payment_intent = event.data.object
         # Get email
@@ -270,12 +269,12 @@ def stripeapi():
         password = os.getenv('SMTP_PASS')
         from_email = os.getenv('SMTP_FROM')
         if from_email == None:
-            from_email = user
+            from_email = "Hosting <"+user + ">"
         
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL(host, port, context=context) as server:
             server.login(user, password)
-            message = "From: Hosting <" + from_email + ">\nTo: " + email + \
+            message = "From: " + from_email + "\nTo: " + email + \
                 "\nSubject: Your Licence key\n\nHello,\n\n"\
                 +"This email contains your licence key for your new wordpress site.\n" \
                 +"You can redeem this key via the discord bot or api.\n\n"\
@@ -283,14 +282,10 @@ def stripeapi():
 
             server.sendmail(from_email, email, message)
 
-
-
-        print('PaymentIntent was successful!', flush=True)
+        print('Licence sent via email for stripe payment', flush=True)
     else:
         print('Unhandled event type {}'.format(event.type))
     return jsonify({'success': 'true'})
-
-
 
 
 def get_sites_count():
