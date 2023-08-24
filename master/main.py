@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 import dotenv
 import os
 import requests
-import stripe
+import stripe # For stripe payments
+import smtplib, ssl # For sending emails
 
 dotenv.load_dotenv()
 
@@ -236,8 +237,6 @@ def tlsa():
 
 @app.route('/stripe', methods=['POST'])
 def stripeapi():
-    print(request.json, flush=True)
-    print(request.headers, flush=True)
     payload = request.data
     stripe.api_key = os.getenv('STRIPE_SECRET')
     endpoint_secret = os.getenv('STRIPE_ENDPOINT_SECRET')
@@ -255,12 +254,32 @@ def stripeapi():
 
     # Handle the event
     if event.type == 'payment_intent.succeeded':
-        payment_intent = event.data.object # contains a stripe.PaymentIntent
+        payment_intent = event.data.object
+        # Get email
+        email = payment_intent['receipt_email']
+        # Create licence key
+        licence_key = os.urandom(16).hex()
+        # Add licence key to file
+        key_file = open('/data/licence_key.txt', 'a')
+        key_file.write(licence_key + '\n')
+        key_file.close()
+        # Send email
+        host = os.getenv('SMTP_HOST')
+        port = os.getenv('SMTP_PORT')
+        user = os.getenv('SMTP_USER')
+        password = os.getenv('SMTP_PASS')
+        from_email = os.getenv('SMTP_FROM')
+        if from_email == None:
+            from_email = user
+        
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(host, port, context=context) as server:
+            server.login(user, password)
+            server.sendmail(from_email, email, "Your licence key is: " + licence_key)
+
+
+
         print('PaymentIntent was successful!', flush=True)
-    elif event.type == 'payment_method.attached':
-        payment_method = event.data.object # contains a stripe.PaymentMethod
-        print('PaymentMethod was attached to a Customer!', flush=True)
-    # ... handle other event types
     else:
         print('Unhandled event type {}'.format(event.type))
     return jsonify({'success': 'true'})
