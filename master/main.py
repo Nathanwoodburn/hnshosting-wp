@@ -152,6 +152,10 @@ def list_workers():
     workers = workers_file.readlines()
     workers_file.close()
 
+    # Check if there are any workers
+    if len(workers) == 0:
+        return jsonify({'error': 'No workers available', 'success': 'false'})
+
     worker_list = []
     for worker in workers:
         # Check worker status
