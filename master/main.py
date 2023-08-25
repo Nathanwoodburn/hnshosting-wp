@@ -462,18 +462,25 @@ def admin():
     
 @app.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        # Handle login
-        print('Login attempt', flush=True)
-        password = request.form['password']
-        if os.getenv('ADMIN_KEY') == password:
-            # Generate login key
-            login_key = os.urandom(32).hex()
-            logins.append(login_key)
-            # Set cookie
-            resp = make_response(redirect('/admin'))
-            resp.set_cookie('login_key', login_key)
-            return resp
+    # Handle login
+    print('Login attempt', flush=True)
+    password = request.form['password']
+    print('Password: ' + password, flush=True)
+    if os.getenv('ADMIN_KEY') == password:
+        print('Login success', flush=True)
+        # Generate login key
+        login_key = os.urandom(32).hex()
+        logins.append(login_key)
+        # Set cookie
+        resp = make_response(redirect('/admin'))
+        resp.set_cookie('login_key', login_key)
+        return resp
+    print('Login failed', flush=True)
+    return redirect('/failed-login')
+
+@app.route('/failed-login')
+def failed_login():
+    return "<h1>Failed login</h1><br><form action='/login' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
 
 
     
