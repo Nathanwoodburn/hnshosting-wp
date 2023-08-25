@@ -443,7 +443,7 @@ def home():
     html += "<h2>Licences</h2>"
     html += "<p>Number of licences: " + str(len(licences)) + "</p>"
 
-    html += "<h2>API</h2>"
+    html += "<h2><a href='/admin'>Admin</a></h2>"
     return html
 
 # Admin page
@@ -457,15 +457,69 @@ def admin():
     if login_key not in logins:
         return "<h1>Admin</h1><br><form action='/login' method='POST'><input type='password' name='password'><input type='submit' value='Login'></form>"
     
-    return "<h1>Admin</h1><br>Logged in"
+    # Show some admin stuff
+    licences = []
+    try:
+        licences_file = open('/data/licence_key.txt', 'r')
+        licences = licences_file.readlines()
+        licences_file.close()
+    except FileNotFoundError:
+        pass
+
+    # Create html page
+    html = "<h1>Admin</h1><br>"
+    html += "<h2>Licences</h2>"
+    html += "<p>Number of licences: " + str(len(licences)) + "</p>"
+    html += "<p>Licences:</p>"
+    html += "<ul>"
+    for licence in licences:
+        html += "<li>" + licence.strip('\n') + "</li>"
+    html += "</ul>"
+    html += "<h2>API</h2>"
+    html += "<p>API key: " + os.getenv('LICENCE_KEY') + "</p>"
+    html += "<p>Worker key: " + os.getenv('WORKER_KEY') + "</p>"
+    html += "<h2>Stripe</h2>"
+    # Check if stripe is enabled
+    if os.getenv('STRIPE_SECRET') == None:
+        html += "<p>Stripe is not enabled</p>"
+    else:
+        html += "<p>Stripe is enabled</p>"
+    
+    html += "<br><br><h2>Workers</h2>"
+    for worker in list_workers().json()['workers']:
+        html += "<p>Worker: " + worker['worker'] + " | IP: " + worker['ip'] + " | Status: " + worker['status'] + " | Sites: " + str(worker['sites']) + "</p>"
+
+    html += "<h2>Sites</h2>"
+    sites = []
+    try:
+        sites_file = open('/data/sites.txt', 'r')
+        sites = sites_file.readlines()
+        sites_file.close()
+    except FileNotFoundError:
+        pass
+
+    for site in sites:
+        html += "<p>Domain: " + site.split(':')[0] + " | Worker: " + site.split(':')[1].strip('\n') + "</p>"
+
+    html += "<br><br><br>"
+
+    html += "<h2>Logout</h2>"
+    html += "<p><a href='/logout'>Logout</a></p>"
+
+
+    return html
     
     
 @app.route('/login', methods=['POST'])
 def login():
     # Handle login
     print('Login attempt', flush=True)
+    # Check if form contains password
+    if 'password' not in request.form:
+        print('Login failed', flush=True)
+        return redirect('/failed-login')
+
     password = request.form['password']
-    print('Password: ' + password, flush=True)
     if os.getenv('ADMIN_KEY') == password:
         print('Login success', flush=True)
         # Generate login key
