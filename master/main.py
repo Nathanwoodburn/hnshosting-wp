@@ -430,7 +430,15 @@ def home():
         pass
 
     # Create html page
-    html = "<h1>Stats</h1><br>"
+    html = "<h1>Welcome</h1><br>"
+    html += "<h2>Create a site</h2>"
+    html += "<form action='/add-site' method='POST'>"
+    html += "<p>Domain: <input type='text' name='domain'></p>"
+    html += "<p>Licence key: <input type='text' name='licence'></p>"
+    html += "<input type='submit' value='Create site'>"
+    html += "</form>"
+
+    html += "<br><h2>Stats</h2><br>"
     html += "<h2>Workers</h2>"
     html += "<p>Number of workers: " + str(len(workers)) + "</p>"
     html += "<p>Workers:</p>"
@@ -560,13 +568,38 @@ def admin():
 
 @app.route('/add-site', methods=['POST'])
 def addsite():
-    # Check cookie
-    login_key = request.cookies.get('login_key')
-    if login_key == None:
-        return redirect('/admin')
-    if login_key not in logins:
-        return redirect('/admin')    
-    
+    # Check for licence key
+    if 'licence' not in request.form:
+        # Check cookie
+        login_key = request.cookies.get('login_key')
+        if login_key == None:
+            return redirect('/admin')
+        if login_key not in logins:
+            return redirect('/admin')    
+    else:
+        # Use licence key
+        licence_key = request.form['licence']
+        # Check if licence key is valid
+        key_file = open('/data/licence_key.txt', 'r')
+        valid_key = False
+        for line in key_file.readlines():
+            if licence_key == line.strip('\n'):
+                valid_key = True
+                break
+        key_file.close()
+        if not valid_key:
+            return jsonify({'error': 'Invalid licence', 'success': 'false'})
+        
+        # Delete licence key
+        key_file = open('/data/licence_key.txt', 'r')
+        lines = key_file.readlines()
+        key_file.close()
+        key_file = open('/data/licence_key.txt', 'w')
+        for line in lines:
+            if line.strip("\n") != licence_key:
+                key_file.write(line)
+        key_file.close()
+
     # Get domain
     domain = request.args.get('domain')
     if domain == None:
@@ -614,7 +647,13 @@ def addsite():
     # Send worker request
     requests.post("http://"+ worker.split(':')[1].strip('\n') + ":5000/new-site?domain=" + domain)
 
-    return redirect('/admin')
+    html = "<h1>Site creating...</h1><br>"
+    html += "<p>Domain: " + domain + "</p>"
+    html += "<p>Worker: " + worker.split(':')[0] + "</p>"
+    html += "<p>Worker IP: " + worker.split(':')[1].strip('\n') + "</p>"
+    html += "<p>Check status <a href='/site-info?domain=" + domain + "'>here</a></p>"
+
+    return html
     
 
 @app.route('/licence')
