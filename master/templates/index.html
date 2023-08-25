@@ -21,10 +21,10 @@
     <div id="stats">
         <h2>Stats</h2>
         <h3>Workers</h3>
-        <ul>{{workers}}</ul>
+        <ul>{{workers|safe}}</ul>
         <h3>Sites</h3>
         <p>Total sites: {{site_count}}</p>
-        <ul>{{sites}}</ul>
+        <ul>{{sites|safe}}</ul>
         <br>
         <h3>Unclaimed licences: {{licences}}</h3>
     </div>
