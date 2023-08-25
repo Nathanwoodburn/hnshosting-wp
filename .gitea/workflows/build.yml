@@ -77,4 +77,3 @@ jobs:
           docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag_num
           docker tag hnshosting-bot:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag
           docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag
-          
