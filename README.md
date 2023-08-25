@@ -47,7 +47,7 @@ General commands (as anyone)
 Docker is the easiest way to install the master server.
 
 ```sh
-docker run -d -p 5000:5000 -e LICENCE-API=your-api-key -e WORKER_KEY=your-api-key --name hnshosting-master git.woodburn.au/nathanwoodburn/hnshosting-master:latest -v ./data:/data
+docker run -d -p 5000:5000 -e LICENCE_KEY=your-api-key -e WORKER_KEY=your-api-key -e ADMIN_KEY=admin-key --name hnshosting-master git.woodburn.au/nathanwoodburn/hnshosting-master:latest -v ./data:/data
 ```
 You can also mount a docker volume to /data to store the files instead of mounting a host directory.
 
