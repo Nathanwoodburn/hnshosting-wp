@@ -65,7 +65,7 @@ async def license(ctx):
 
 @tree.command(name="createsite", description="Create a new WordPress site")
 async def createsite(ctx, domain: str, licence: str):
-    if FREE_LICENCE == False: # If free licences are enabled then auto generate a licence
+    if FREE_LICENCE == True: # If free licences are enabled then auto generate a licence
         r = requests.post(f"http://{Master_IP}:{Master_Port}/add-licence",headers={"key":os.getenv('LICENCE_KEY')})
         if r.status_code == 200:
             json = r.json()
