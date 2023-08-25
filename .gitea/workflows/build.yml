@@ -24,7 +24,7 @@ jobs:
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           tag=${tag//\//-}
-          tag_num=$(git log --oneline | wc -l)
+          tag_num=${GITHUB_RUN_NUMBER}
           echo "tag_num=$tag_num"          
 
           if [[ "$tag" == "main" ]]; then
