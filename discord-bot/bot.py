@@ -13,9 +13,14 @@ Master_Port = os.getenv('MASTER_PORT')
 if Master_Port == None:
     Master_Port = "5000"
 
-FREE_LICENCE = os.getenv('FREE_LICENCE')
+FREE_LICENCE = os.getenv('FREE_MODE')
 if FREE_LICENCE == None:
     FREE_LICENCE = False
+else:
+    if FREE_LICENCE.lower() == "true":
+        FREE_LICENCE = True
+    else:
+        FREE_LICENCE = False
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -50,9 +55,8 @@ async def listworkers(ctx):
 @tree.command(name="licence", description="Gets a licence key")
 async def license(ctx):
     if ctx.user.id != ADMINID:        
-        if FREE_LICENCE == False: # If free licences are enabled then anyone can get a licence
-            await ctx.response.send_message("You do not have permission to use this command",ephemeral=True)
-            return
+        await ctx.response.send_message("You do not have permission to use this command",ephemeral=True)
+        return
         
     r = requests.post(f"http://{Master_IP}:{Master_Port}/add-licence",headers={"key":os.getenv('LICENCE_KEY')})
     if r.status_code == 200:
@@ -65,7 +69,17 @@ async def license(ctx):
         await ctx.response.send_message(f"Error getting license\n" + r.text,ephemeral=True)
 
 @tree.command(name="createsite", description="Create a new WordPress site")
-async def createsite(ctx, domain: str, licence: str):
+async def createsite(ctx, domain: str, licence: str = None):
+    if FREE_LICENCE == True: # If free licences are enabled then auto generate a licence
+        r = requests.post(f"http://{Master_IP}:{Master_Port}/add-licence",headers={"key":os.getenv('LICENCE_KEY')})
+        if r.status_code == 200:
+            json = r.json()
+            if json['success'] == "true":
+                licence = json['licence_key']
+            else:
+                await ctx.response.send_message(f"Error getting license\n" + json['error'])
+                return
+        
     r = requests.post(f"http://{Master_IP}:{Master_Port}/new-site?domain={domain}",headers={"key":licence})
     if r.status_code == 200:
         json = r.json()
