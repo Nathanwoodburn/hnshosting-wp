@@ -447,10 +447,10 @@ def home():
     return html
 
 # Admin page
-@app.route('/admin',)
+@app.route('/admin', methods=['GET', 'POST'])
 def admin():
     # Check if logged in
-    loggin_key = request.cookies.get('login_key')
+    login_key = request.cookies.get('login_key')
 
     if request.method == 'POST':
         # Handle login
@@ -465,9 +465,9 @@ def admin():
             return resp
 
 
-    if loggin_key == None:
+    if login_key == None:
         return "<h1>Admin</h1><br><form action='/admin' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
-    if loggin_key not in loggins:
+    if login_key not in loggins:
         return "<h1>Admin</h1><br><form action='/admin' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
     
     return "<h1>Admin</h1><br>Logged in"
