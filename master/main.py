@@ -533,7 +533,7 @@ def admin():
 
         html += "<p>Domain: " + site.split(':')[0] + " | Worker: " + site.split(':')[1].strip('\n') + "</p>"
 
-    html += "<br><br><br>"
+    html += "<br><br>"
     # Form to add worker
     html += "<h2>Add worker</h2>"
     html += "<form action='/new-worker' method='POST'>"
@@ -543,7 +543,7 @@ def admin():
     html += "<input type='submit' value='Add worker'>"
     html += "</form>"
     
-    html += "<h2><a href='/licence'>New Licence</a></h2>"
+    html += "<br><h2><a href='/licence'>Add Licence</a></h2><br>"
     # Form to add site
     html += "<h2>Add site</h2>"
     html += "<form action='/add-site' method='POST'>"
@@ -558,7 +558,7 @@ def admin():
     return html
     
 
-@app.route('/add-site')
+@app.route('/add-site', methods=['POST'])
 def addsite():
     # Check cookie
     login_key = request.cookies.get('login_key')
