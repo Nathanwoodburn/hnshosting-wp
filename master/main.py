@@ -1,4 +1,4 @@
-from flask import Flask, make_response, redirect, request, jsonify
+from flask import Flask, make_response, redirect, request, jsonify, render_template, send_from_directory
 import dotenv
 import os
 import requests
@@ -459,30 +459,15 @@ def home():
         pass
 
     # Create html page
-    html = "<h1>Welcome</h1><br>"
-    html += "<h2>Create a site</h2>"
-    html += "<form action='/add-site' method='POST'>"
-    html += "<p>Domain: <input type='text' name='domain'></p>"
-    html += "<p>Licence key: <input type='text' name='licence'></p>"
-    html += "<input type='submit' value='Create site'>"
-    html += "</form>"
-
-    html += "<br><h2>Stats</h2><br>"
-    html += "<h3>Workers</h3>"
-    html += "<ul>"
+    workerhtml = ""
     for worker in workers:
-        html += "<li>Name: " + worker.split(':')[0] + " | IP: " + worker.split(':')[2].strip('\n') + "</li>"
-    html += "</ul>"
-    html += "<h3>Sites</h3>"
-    html += "<p>Total sites: " + str(len(sites)) + "</p>"
-    html += "<ul>"
+        workerhtml += "<li>Name: " + worker.split(':')[0] + " | IP: " + worker.split(':')[2].strip('\n') + "</li>"
+    sitehtml = ""
     for site in sites:
-        html += "<li>Domain: <a href=\"https://" + site.split(':')[0] + "\" target=\"_blank\">"+site.split(':')[0]+"</a> | Worker: " + site.split(':')[1].strip('\n') + "</li>"
-    html += "</ul>"
-    html += "<h3>Number of unclaimed licences: " + str(len(licences)) + "</h3>"
+        sitehtml += "<li>Domain: <a href=\"https://" + site.split(':')[0] + "\" target=\"_blank\">"+site.split(':')[0]+"</a> | Worker: " + site.split(':')[1].strip('\n') + "</li>"
 
-    html += "<h2><a href='/admin'>Admin</a></h2>"
-    return html
+    
+    return render_template('index.html', workers=workerhtml, site_count = str(len(sites)), sites = sitehtml, licences = str(len(licences)))
 
 # Admin page
 @app.route('/admin')
@@ -776,7 +761,10 @@ def login():
 def failed_login():
     return "<h1>Failed login</h1><br><form action='/login' method='POST'><input type='password' name='password'><input type='submit' value='Login'></form>"
 
-
+# Assets
+@app.route('/assets/<path:path>')
+def send_report(path):
+    return send_from_directory('assets', path)
     
 
 

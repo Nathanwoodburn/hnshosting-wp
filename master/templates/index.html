@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en-au">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HNS Hosting Wordpress</title>
+    <link rel="stylesheet" href="/assets/css/index.css">
+</head>
+<body>
+    <h1>HNS Hosting Wordpress</h1>
+    <p>Intro blurb</p>
+    <br>
+    <div id="new">
+        <h2>Create a new site</h2>
+        <form action='/add-site' method='POST'>
+            <p>Domain: <input type='text' name='domain'></p>
+            <p>Licence key: <input type='text' name='licence'></p>
+        </form>
+    </div>
+    <br>
+    <div id="stats">
+        <h2>Stats</h2>
+        <h3>Workers</h3>
+        <ul>{{workers}}</ul>
+        <h3>Sites</h3>
+        <p>Total sites: {{site_count}}</p>
+        <ul>{{sites}}</ul>
+        <br>
+        <h3>Unclaimed licences: {{licences}}</h3>
+    </div>
+    <br>
+    <h2><a href="/admin">Admin</a></h2>
+</body>
+</html>
