@@ -76,7 +76,7 @@ async def createsite(ctx, domain: str, licence: str):
 
             ready = False
             while ready == False:
-                ready = await check_site_ready(domain,ctx.user.id)
+                ready = await check_site_ready(domain)
                 if ready == False:
                     await asyncio.sleep(30)
 
