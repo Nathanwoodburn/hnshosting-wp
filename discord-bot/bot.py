@@ -71,14 +71,12 @@ async def createsite(ctx, domain: str, licence: str):
         json = r.json()
         if json['success'] == "true":
             await ctx.response.send_message(f"Site {domain} creating...\nI'll send you a message when it's ready")
-            # Set a timer to check if the site is ready
-            # Keep checking every 30 seconds until it is ready
 
             ready = False
             while ready == False:
                 ready = await check_site_ready(domain)
                 if ready == False:
-                    await asyncio.sleep(30)
+                    await asyncio.sleep(5)
 
             r = requests.get(f"http://{Master_IP}:{Master_Port}/site-info?domain={domain}")
             json = r.json()
