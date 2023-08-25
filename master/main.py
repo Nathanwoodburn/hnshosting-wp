@@ -495,6 +495,9 @@ def admin():
         pass
 
     for worker in workers:
+        if not worker.__contains__(':'):
+            continue
+
         html += "<p>Name: " + worker.split(':')[0] + " | Public IP " + worker.split(':')[2].strip('\n') + " | Private IP " + worker.split(':')[1]
         # Check worker status
         online=True
@@ -518,17 +521,79 @@ def admin():
         pass
 
     for site in sites:
+        if not site.__contains__(':'):
+            continue
+
         html += "<p>Domain: " + site.split(':')[0] + " | Worker: " + site.split(':')[1].strip('\n') + "</p>"
 
     html += "<br><br><br>"
+    # Form to add worker
+    html += "<h2>Add worker</h2>"
+    html += "<form action='/new-worker' method='POST'>"
+    html += "<p>Name: <input type='text' name='name'></p>"
+    html += "<p>Public IP: <input type='text' name='ip'></p>"
+    html += "<p>Private IP: <input type='text' name='priv'></p>"
+    html += "<input type='submit' value='Add worker'>"
+    html += "</form>"
+    # Form to add licence
+    #! TODO
 
-    html += "<h2>Logout</h2>"
+
+    html += "<br><br><h2>Logout</h2>"
     html += "<p><a href='/logout'>Logout</a></p>"
 
 
     return html
     
+@app.route('/new-worker', methods=['POST'])
+def new_worker():
+    # Check cookie
+    login_key = request.cookies.get('login_key')
+
+    if login_key == None:
+        return redirect('/admin')
+    if login_key not in logins:
+        return redirect('/admin')
     
+    worker = request.form['name']
+    worker_IP = request.form['ip']
+    worker_PRIV = request.form['priv']
+
+
+    # Check worker file
+    try:
+        workers_file = open('/data/workers.txt', 'r')
+    except FileNotFoundError:
+        workers_file = open('/data/workers.txt', 'w')
+        workers_file.close()
+        workers_file = open('/data/workers.txt', 'r')
+    
+    # Check if worker already exists
+    if worker in workers_file.read():
+        return jsonify({'error': 'Worker already exists', 'success': 'false'})
+    
+    workers_file.close()
+
+    # Add worker to file
+    workers_file = open('/data/workers.txt', 'a')
+    workers_file.write(worker + ":" + worker_PRIV + ":"+ worker_IP + '\n')
+    workers_file.close()
+
+    return redirect('/admin')    
+
+
+@app.route('/logout')
+def logout():
+    login_key = request.cookies.get('login_key')
+    if login_key == None:
+        return redirect('/admin')
+    if login_key not in logins:
+        return redirect('/admin')
+    
+    logins.remove(login_key)
+    return redirect('/admin')
+
+
 @app.route('/login', methods=['POST'])
 def login():
     # Handle login
