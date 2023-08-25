@@ -390,6 +390,61 @@ def workerIP(worker):
     return ip
         
 
+# Home page
+@app.route('/')
+def home():
+    # Show stats and info
+    
+    # Get worker info
+    workers = []
+    try:
+        workers_file = open('/data/workers.txt', 'r')
+        workers = workers_file.readlines()
+        workers_file.close()
+    except FileNotFoundError:
+        pass
+
+    # Get site info
+    sites = []
+    try:
+        sites_file = open('/data/sites.txt', 'r')
+        sites = sites_file.readlines()
+        sites_file.close()
+    except FileNotFoundError:
+        pass
+
+    # Get licence info
+    licences = []
+    try:
+        licences_file = open('/data/licence_key.txt', 'r')
+        licences = licences_file.readlines()
+        licences_file.close()
+    except FileNotFoundError:
+        pass
+
+    # Create html page
+    html = "<h1>Stats</h1><br>"
+    html += "<h2>Workers</h2>"
+    html += "<p>Number of workers: " + str(len(workers)) + "</p>"
+    html += "<p>Workers:</p>"
+    html += "<ul>"
+    for worker in workers:
+        html += "<li>Name: " + worker.split(':')[0] + " | IP " + worker.split(':')[2].strip('\n') + "</li>"
+    html += "</ul>"
+    html += "<h2>Sites</h2>"
+    html += "<p>Number of sites: " + str(len(sites)) + "</p>"
+    html += "<p>Sites:</p>"
+    html += "<ul>"
+    for site in sites:
+        html += "<li>Domain: " + site.split(':')[0] + " | Worker: " + site.split(':')[1].strip('\n') + "</li>"
+    html += "</ul>"
+    html += "<h2>Licences</h2>"
+    html += "<p>Number of licences: " + str(len(licences)) + "</p>"
+    
+    
+    
+
+
 # Start the server
 if __name__ == '__main__':
     app.run(debug=False, port=5000, host='0.0.0.0')
