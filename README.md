@@ -11,6 +11,14 @@ The master server will be used to manage the worker servers.
 The worker servers will be used to host the wordpress sites.
 The bot will be used to provide an easier way to manage the master server.
 
+![Overview of system](assets/overview.png)  
+
+| Legend | Description |
+| --- | --- |
+| Red Connections | Secured by VPN or over LAN ONLY. (NOT API SECURED) |
+| Yellow Connections | HTTP/HTTPS public traffic |
+
+
 ## Usage
 
 After installing the master and discord bot you can use the following commands (as bot owner).
@@ -74,12 +82,14 @@ cd hnshosting-wp/worker
 chmod +x install.sh
 ./install.sh
 ```
-Then to start the worker api server
+Just press enter when it shows any prompts.  
+
+Start the worker api server using
 ```sh
 screen -dmS hnshosting-worker python3 main.py
 ```
 
-Add worker to master server:
+Add worker to master server pool:
 
 ```sh
 curl -X POST http://master-server-ip:5000/add-worker?worker=worker-name&ip=worker-server-ip -H "key: api-key"
