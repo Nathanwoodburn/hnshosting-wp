@@ -453,9 +453,9 @@ def admin():
     login_key = request.cookies.get('login_key')
 
     if login_key == None:
-        return "<h1>Admin</h1><br><form action='/login' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
+        return "<h1>Admin</h1><br><form action='/login' method='POST'><input type='password' name='password'><input type='submit' value='Login'></form>"
     if login_key not in logins:
-        return "<h1>Admin</h1><br><form action='/login' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
+        return "<h1>Admin</h1><br><form action='/login' method='POST'><input type='password' name='password'><input type='submit' value='Login'></form>"
     
     return "<h1>Admin</h1><br>Logged in"
     
@@ -480,7 +480,7 @@ def login():
 
 @app.route('/failed-login')
 def failed_login():
-    return "<h1>Failed login</h1><br><form action='/login' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
+    return "<h1>Failed login</h1><br><form action='/login' method='POST'><input type='password' name='password'><input type='submit' value='Login'></form>"
 
 
     
