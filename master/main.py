@@ -542,16 +542,100 @@ def admin():
     html += "<p>Private IP: <input type='text' name='priv'></p>"
     html += "<input type='submit' value='Add worker'>"
     html += "</form>"
-    # Form to add licence
-    #! TODO
+    
+    html += "<h2><a href='/licence'>New Licence</a></h2>"
+    # Form to add site
+    html += "<h2>Add site</h2>"
+    html += "<form action='/add-site' method='POST'>"
+    html += "<p>Domain: <input type='text' name='domain'></p>"
+    html += "<input type='submit' value='Add site'>"
+    html += "</form>"
+    
 
-
-    html += "<br><br><h2>Logout</h2>"
-    html += "<p><a href='/logout'>Logout</a></p>"
+    html += "<br><a href='/logout'>Logout</a></h2>"
 
 
     return html
     
+
+@app.route('/add-site')
+def licence():
+    # Check cookie
+    login_key = request.cookies.get('login_key')
+    if login_key == None:
+        return redirect('/admin')
+    if login_key not in logins:
+        return redirect('/admin')    
+    
+    # Get domain
+    domain = request.args.get('domain')
+    if domain == None:
+        return redirect('/admin')
+    # Check if domain already exists
+    if site_exists(domain):
+        return jsonify({'error': 'Domain already exists', 'success': 'false'})
+    
+    # Check if domain contains http:// or https://
+    if domain.startswith("http://") or domain.startswith("https://"):
+        return jsonify({'error': 'Domain should not contain http:// or https://', 'success': 'false'})
+    
+
+    # Check if worker file exists
+    workers = None
+    try:
+        worker_file = open('/data/workers.txt', 'r')
+        workers = worker_file.readlines()
+        worker_file.close()
+    except FileNotFoundError:
+        return jsonify({'error': 'No workers available', 'success': 'false'})
+    
+    # Get a worker that has available slots
+    worker = None
+    for line in workers:
+        if not line.__contains__(':'):
+            continue
+
+        ip = line.split(':')[1].strip('\n')
+        resp=requests.get("http://"+ip + ":5000/status",timeout=2)
+        if (resp.status_code == 200):
+            if resp.json()['availability'] == True:
+                worker = line
+                break
+    
+    if worker == None:
+        return jsonify({'error': 'No workers available', 'success': 'false'})
+
+
+    # Add domain to file
+    sites_file = open('/data/sites.txt', 'a')
+    sites_file.write(domain + ':' + worker.split(':')[0] + '\n')
+    sites_file.close()
+
+    # Send worker request
+    requests.post("http://"+ worker.split(':')[1].strip('\n') + ":5000/new-site?domain=" + domain)
+
+    return redirect('/admin')
+    
+
+@app.route('/licence')
+def licence():
+    # Check cookie
+    login_key = request.cookies.get('login_key')
+    if login_key == None:
+        return redirect('/admin')
+    if login_key not in logins:
+        return redirect('/admin')
+    licence_key = os.urandom(16).hex()
+
+    # Add license key to file
+    key_file = open('/data/licence_key.txt', 'a')
+    key_file.write(licence_key + '\n')
+    key_file.close()
+
+    return "<h1>Licence key</h1><br><p>" + licence_key + "</p><br><a href='/admin'>Back</a>"
+    
+
+
 @app.route('/new-worker', methods=['POST'])
 def new_worker():
     # Check cookie
