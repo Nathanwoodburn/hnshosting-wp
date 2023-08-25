@@ -473,17 +473,17 @@ def home():
     html += "<p>Workers:</p>"
     html += "<ul>"
     for worker in workers:
-        html += "<li>Name: " + worker.split(':')[0] + " | IP " + worker.split(':')[2].strip('\n') + "</li>"
+        html += "<li>Name: " + worker.split(':')[0] + " | IP: " + worker.split(':')[2].strip('\n') + "</li>"
     html += "</ul>"
     html += "<h2>Sites</h2>"
     html += "<p>Number of sites: " + str(len(sites)) + "</p>"
     html += "<p>Sites:</p>"
     html += "<ul>"
     for site in sites:
-        html += "<li>Domain: " + site.split(':')[0] + " | Worker: " + site.split(':')[1].strip('\n') + "</li>"
+        html += "<li>Domain: <a href=https://" + site.split(':')[0] + "target=\"_blank\">"+site.split(':')[0]+"<\a> | Worker: " + site.split(':')[1].strip('\n') + "</li>"
     html += "</ul>"
     html += "<h2>Licences</h2>"
-    html += "<p>Number of licences: " + str(len(licences)) + "</p>"
+    html += "<p>Number of unclaimed licences: " + str(len(licences)) + "</p>"
 
     html += "<h2><a href='/admin'>Admin</a></h2>"
     return html
