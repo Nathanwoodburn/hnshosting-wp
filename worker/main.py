@@ -67,16 +67,11 @@ def ping():
     return 'pong'
 
 def get_sites_count():
-    # If file doesn't exist, create it
-    try:
-        sites_file = open('sites.txt', 'r')
-    except FileNotFoundError:
-        sites_file = open('sites.txt', 'w')
-        sites_file.close()
-        sites_file = open('sites.txt', 'r')
-    print(sites_file.readlines())
+    # Get number of files in nginx/sites
+    dir = os.listdir('/etc/nginx/sites-available')
+    num_Sites = len(dir) - 1    
     # Return number of lines in file
-    return len(sites_file.readlines())
+    return num_Sites
 
 def site_exists(domain):
     # If file doesn't exist, create it
