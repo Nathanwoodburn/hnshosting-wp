@@ -1,14 +1,12 @@
-name: Build Docker
+name: Build Docker for Release
 run-name: Build Docker Images
-on:
+
+on: 
   push:
-    branches:
-      - '*'
-    tags-ignore:
+    tags:
       - '*'
 
-jobs:
-  Build Master:
+Build Master:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,24 +24,13 @@ jobs:
         run : |          
           cd master
           echo "${{ secrets.DOCKERGIT_TOKEN }}" | docker login git.woodburn.au -u nathanwoodburn --password-stdin
-          echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          tag=${tag//\//-}
-          tag_num=${GITHUB_RUN_NUMBER}
-          echo "tag_num=$tag_num"          
+          tag=${GITHUB_REF#refs/tags/}
 
-          if [[ "$tag" == "main" ]]; then
-            tag="latest"
-          else
-            tag_num="${tag}-${tag_num}"
-          fi
-          
-
-          docker build -t hnshosting-master:$tag_num .
-          docker tag hnshosting-master:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-master:$tag_num
-          docker push git.woodburn.au/nathanwoodburn/hnshosting-master:$tag_num
-          docker tag hnshosting-master:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-master:$tag
-          docker push git.woodburn.au/nathanwoodburn/hnshosting-master:$tag
+          docker build -t hnshosting-master:release-$tag .
+          docker tag hnshosting-master:release-$tag git.woodburn.au/nathanwoodburn/hnshosting-master:release-$tag
+          docker push git.woodburn.au/nathanwoodburn/hnshosting-master:release-$tag
+          docker tag hnshosting-master:release-$tag git.woodburn.au/nathanwoodburn/hnshosting-master:release
+          docker push git.woodburn.au/nathanwoodburn/hnshosting-master:release
 
           
 
@@ -67,18 +54,10 @@ jobs:
         run : |          
           cd discord-bot
           echo "${{ secrets.DOCKERGIT_TOKEN }}" | docker login git.woodburn.au -u nathanwoodburn --password-stdin
-          echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          tag=${tag//\//-}
-          tag_num=${GITHUB_RUN_NUMBER}
-          if [[ "$tag" == "main" ]]; then
-            tag="latest"
-          else
-            tag_num="${tag}-${tag_num}"
-          fi
+          tag=${GITHUB_REF#refs/tags/}
 
-          docker build -t hnshosting-bot:$tag_num .
-          docker tag hnshosting-bot:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag_num
-          docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag_num
-          docker tag hnshosting-bot:$tag_num git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag
-          docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:$tag
+          docker build -t hnshosting-bot:release-$tag .
+          docker tag hnshosting-bot:release-$tag git.woodburn.au/nathanwoodburn/hnshosting-bot:release-$tag
+          docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:release-$tag
+          docker tag hnshosting-bot:release-$tag git.woodburn.au/nathanwoodburn/hnshosting-bot:release
+          docker push git.woodburn.au/nathanwoodburn/hnshosting-bot:release
