@@ -25,6 +25,9 @@ jobs:
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           tag=${tag//\//-}
           tag_num=$(git rev-list --count HEAD)
+          echo "tag_num=$tag_num"
+          
+          tag_num=$(git rev-list ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}} --count)
 
           if [[ "$tag" == "main" ]]; then
             tag="latest"
