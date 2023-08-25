@@ -24,7 +24,7 @@ The bot will be used to provide an easier way to manage the master server.
 After installing the master and discord bot you can use the following commands (as bot owner).
 
 ```
-/addworker <ip> <name>              | add a worker to the master server pool (Make sure the master can access port 5000 on the worker, and don't allow anyone else to access it)
+/addworker <ip> <private ip> <name> | add a worker to the master server pool
 /listworkers                        | list all workers
 /licence                            | Creates a licence key (valid for 1 wp site)
 ```
