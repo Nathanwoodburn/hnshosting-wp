@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import discord
 from discord import app_commands
 import requests
+import asyncio
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -69,7 +70,22 @@ async def createsite(ctx, domain: str, licence: str):
     if r.status_code == 200:
         json = r.json()
         if json['success'] == "true":
-            await ctx.response.send_message(f"Site {domain} creating...\nPlease wait a few minutes and then send /siteinfo domain:{domain}")
+            await ctx.response.send_message(f"Site {domain} creating...\nI'll send you a message when it's ready")
+
+            ready = False
+            while ready == False:
+                ready = await check_site_ready(domain)
+                if ready == False:
+                    await asyncio.sleep(5)
+
+            r = requests.get(f"http://{Master_IP}:{Master_Port}/site-info?domain={domain}")
+            json = r.json()
+            if json['success'] == "true":
+                await ctx.user.send(f"Site {domain} is ready!\nHere is the site info for {json['domain']}\nA: `{json['ip']}`\nTLSA: `{json['tlsa']}`\nMake sure you put the TLSA in either `_443._tcp.{domain}` or `*.{domain}`")
+            else:
+                await ctx.user.send(f"Error getting site info\n" + json['error'])
+
+
         else:
             await ctx.response.send_message(f"Error creating site\n" + json['error'])
     else:
@@ -87,6 +103,17 @@ async def siteinfo(ctx, domain: str):
             await ctx.response.send_message(f"Error getting site info\n" + json['error'])
     else:
         await ctx.response.send_message(f"Error getting site info\n" + r.text)
+
+async def check_site_ready(domain):
+    r = requests.get(f"http://{Master_IP}:{Master_Port}/site-info?domain={domain}")
+    if r.status_code == 200:
+        json = r.json()
+        if json['success'] == "true":
+            return True
+        else:
+            return False
+    else:
+        return False
 
 # When the bot is ready
 @client.event
