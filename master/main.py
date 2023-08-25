@@ -440,6 +440,8 @@ def home():
     html += "</ul>"
     html += "<h2>Licences</h2>"
     html += "<p>Number of licences: " + str(len(licences)) + "</p>"
+
+    return html
     
     
     
