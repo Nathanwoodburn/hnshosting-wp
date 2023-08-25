@@ -168,7 +168,7 @@ def list_workers():
     for worker in workers:
         # Check worker status
         if not worker.__contains__(':'):
-            return jsonify({'error': 'No workers available', 'success': 'false'})
+            continue
 
         online=True
         resp=requests.get("http://"+worker.split(':')[1].strip('\n') + ":5000/status",timeout=2)
@@ -178,7 +178,9 @@ def list_workers():
             continue
         sites = resp.json()['num_sites']
         worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': sites, 'ready': 1})
-        
+    
+    if len(worker_list) == 0:
+        return jsonify({'error': 'No workers available', 'success': 'false'})
     return jsonify({'success': 'true', 'workers': worker_list})
 
 @app.route('/site-info', methods=['GET'])
