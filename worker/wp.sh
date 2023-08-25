@@ -61,11 +61,6 @@ services:
 volumes:
   mysql:
   data:
-    driver: local
-    driver_opts:
-      o: "size=5g,uid=1000"
-      device: tmpfs
-      type: tmpfs
 """ > docker-compose.yml
 
 # Start the containers
