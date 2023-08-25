@@ -559,7 +559,7 @@ def admin():
     
 
 @app.route('/add-site')
-def licence():
+def addsite():
     # Check cookie
     login_key = request.cookies.get('login_key')
     if login_key == None:
@@ -625,6 +625,7 @@ def licence():
         return redirect('/admin')
     if login_key not in logins:
         return redirect('/admin')
+    
     licence_key = os.urandom(16).hex()
 
     # Add license key to file
