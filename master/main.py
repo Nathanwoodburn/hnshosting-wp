@@ -480,7 +480,7 @@ def home():
     html += "<p>Sites:</p>"
     html += "<ul>"
     for site in sites:
-        html += "<li>Domain: <a href=\"https://" + site.split(':')[0] + "\" target=\"_blank\">"+site.split(':')[0]+"<\a> | Worker: " + site.split(':')[1].strip('\n') + "</li>"
+        html += "<li>Domain: <a href=\"https://" + site.split(':')[0] + "\" target=\"_blank\">"+site.split(':')[0]+"</a> | Worker: " + site.split(':')[1].strip('\n') + "</li>"
     html += "</ul>"
     html += "<h2>Licences</h2>"
     html += "<p>Number of unclaimed licences: " + str(len(licences)) + "</p>"
