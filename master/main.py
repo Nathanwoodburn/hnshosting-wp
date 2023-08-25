@@ -174,10 +174,14 @@ def list_workers():
         resp=requests.get("http://"+worker.split(':')[1].strip('\n') + ":5000/status",timeout=2)
         if (resp.status_code != 200):
             online=False
-            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': 0, 'ready': 0})
+            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': 0, 'status': 'offline'})
             continue
         sites = resp.json()['num_sites']
-        worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': sites, 'ready': 1})
+        availability = resp.json()['availability']
+        if availability == True:
+            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': sites, 'status': 'ready'})
+        else:
+            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': sites, 'status': 'full'})
     
     if len(worker_list) == 0:
         return jsonify({'error': 'No workers available', 'success': 'false'})
