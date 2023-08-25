@@ -43,8 +43,16 @@ def new_site():
         return jsonify({'error': 'Missing domain', 'success': 'false'})
 
     # Check if API key is a valid site key
-    if api_key not in open('/data/licence_key.txt', 'r').read():
-        return jsonify({'error': 'Invalid API key', 'success': 'false'})
+    key_file = open('/data/licence_key.txt', 'r')
+    valid_key = False
+    for line in key_file.readlines():
+        if api_key == line.strip('\n'):
+            valid_key = True
+            break
+    key_file.close()
+    if not valid_key:
+        return jsonify({'error': 'Invalid licence', 'success': 'false'})
+    
     
     # Check if domain already exists
     if site_exists(domain):
