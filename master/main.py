@@ -601,9 +601,9 @@ def addsite():
         key_file.close()
 
     # Get domain
-    domain = request.args.get('domain')
+    domain = request.form['domain']
     if domain == None:
-        return redirect('/admin')
+        return jsonify({'error': 'No domain sent', 'success': 'false'})
     # Check if domain already exists
     if site_exists(domain):
         return jsonify({'error': 'Domain already exists', 'success': 'false'})
