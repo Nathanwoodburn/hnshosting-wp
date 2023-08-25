@@ -18,6 +18,10 @@ The bot will be used to provide an easier way to manage the master server.
 | Red Connections | Secured by VPN or over LAN ONLY. (NOT API SECURED) |
 | Yellow Connections | HTTP/HTTPS public traffic |
 
+## Features
+- [x] Add new worker server to master server pool
+- [x] Create wordpress site on random worker server
+- [x] Optional Free mode (see Bot section)
 
 ## Usage
 
@@ -105,4 +109,10 @@ Alternatively you can use the discord bot to add the worker to the master server
 Docker install
 ```sh
 docker run -d -e MASTER_IP=<MASTER SERVER IP> -e DISCORD_TOKEN=<YOUR-BOT-TOKEN> -e LICENCE_KEY=your-api-key -e WORKER_KEY=your-api-key --name hnshosting-bot git.woodburn.au/nathanwoodburn/hnshosting-bot:latest
+```
+
+Enable the free mode by setting the following environment variable.  
+This will allow you to create a wordpress site without using a licence key using the /createsite command.
+```
+FREE_MODE: true
 ```

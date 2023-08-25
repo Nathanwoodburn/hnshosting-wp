@@ -13,7 +13,7 @@ Master_Port = os.getenv('MASTER_PORT')
 if Master_Port == None:
     Master_Port = "5000"
 
-FREE_LICENCE = os.getenv('FREE_LICENCE')
+FREE_LICENCE = os.getenv('FREE_MODE')
 if FREE_LICENCE == None:
     FREE_LICENCE = False
 else:
