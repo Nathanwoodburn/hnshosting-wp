@@ -65,7 +65,7 @@ jobs:
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           tag=${tag//\//-}
-          tag_num=$(git rev-list --count HEAD)
+          tag_num=${GITHUB_RUN_NUMBER}
           if [[ "$tag" == "main" ]]; then
             tag="latest"
           else
