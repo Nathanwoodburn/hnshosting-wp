@@ -234,7 +234,7 @@ def site_status():
 
 
 @app.route('/info')
-def site_status():
+def site_status_human():
     domain = request.args.get('domain')
     if domain == None:
         return "<h1>Invalid domain</h1>"
