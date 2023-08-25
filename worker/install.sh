@@ -2,8 +2,13 @@
 # Initial install for all prerequisites for the project.
 # This makes it quicker to get each site up and running.
 
-# Update the system
-sudo apt update && sudo apt upgrade -y
+# Stop kernel prompts
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
+echo "Dpkg::Options { \"--force-confdef\"; \"--force-confold\"; };" | sudo tee /etc/apt/apt.conf.d/local
+
+KERNEL_VERSION=$(uname -r)
+sudo apt-mark hold linux-image-generic linux-headers-generic linux-generic linux-image-$KERNEL_VERSION linux-headers-$KERNEL_VERSION
 
 # Install Docker
 sudo apt install apt-transport-https ca-certificates curl software-properties-common python3-pip nginx -y
