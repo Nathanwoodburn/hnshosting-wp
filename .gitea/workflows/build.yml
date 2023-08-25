@@ -21,10 +21,11 @@ jobs:
         run : |          
           cd master
           echo "${{ secrets.DOCKERGIT_TOKEN }}" | docker login git.woodburn.au -u nathanwoodburn --password-stdin
-          tag_num=$(git rev-parse --short HEAD)
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           tag=${tag//\//-}
+          tag_num=$(git rev-list --count HEAD)
+
           if [[ "$tag" == "main" ]]; then
             tag="latest"
           else
@@ -60,10 +61,10 @@ jobs:
         run : |          
           cd discord-bot
           echo "${{ secrets.DOCKERGIT_TOKEN }}" | docker login git.woodburn.au -u nathanwoodburn --password-stdin
-          tag_num=$(git rev-parse --short HEAD)
           echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           tag=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           tag=${tag//\//-}
+          tag_num=$(git rev-list --count HEAD)
           if [[ "$tag" == "main" ]]; then
             tag="latest"
           else
