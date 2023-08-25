@@ -10,7 +10,7 @@ dotenv.load_dotenv()
 
 app = Flask(__name__)
 
-loggins = []
+logins = []
 
 # API add license key (requires API key in header)
 @app.route('/add-licence', methods=['POST'])
@@ -447,33 +447,35 @@ def home():
     return html
 
 # Admin page
-@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/admin')
 def admin():
     # Check if logged in
     login_key = request.cookies.get('login_key')
 
+    if login_key == None:
+        return "<h1>Admin</h1><br><form action='/login' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
+    if login_key not in logins:
+        return "<h1>Admin</h1><br><form action='/login' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
+    
+    return "<h1>Admin</h1><br>Logged in"
+    
+    
+@app.route('/login', methods=['POST'])
+def admin():
     if request.method == 'POST':
         # Handle login
+        print('Login attempt', flush=True)
         password = request.form['password']
-        if os.getenv(ADMIN_KEY) == password:
+        if os.getenv('ADMIN_KEY') == password:
             # Generate login key
             login_key = os.urandom(32).hex()
-            loggins.append(login_key)
+            logins.append(login_key)
             # Set cookie
             resp = make_response(redirect('/admin'))
             resp.set_cookie('login_key', login_key)
             return resp
 
 
-    if login_key == None:
-        return "<h1>Admin</h1><br><form action='/admin' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
-    if login_key not in loggins:
-        return "<h1>Admin</h1><br><form action='/admin' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
-    
-    return "<h1>Admin</h1><br>Logged in"
-    
-    
-    
     
 
 
