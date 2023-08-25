@@ -16,6 +16,11 @@ if Master_Port == None:
 FREE_LICENCE = os.getenv('FREE_LICENCE')
 if FREE_LICENCE == None:
     FREE_LICENCE = False
+else:
+    if FREE_LICENCE.lower() == "true":
+        FREE_LICENCE = True
+    else:
+        FREE_LICENCE = False
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)

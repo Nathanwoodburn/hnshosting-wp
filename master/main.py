@@ -37,7 +37,7 @@ def new_site():
     
     # Verify both API key and domain exist
     if api_key == None:
-        return jsonify({'error': 'Missing API key', 'success': 'false'})
+        return jsonify({'error': 'No licence provided', 'success': 'false'})
     
     if domain == None:
         return jsonify({'error': 'Missing domain', 'success': 'false'})
