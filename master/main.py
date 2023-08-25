@@ -461,7 +461,7 @@ def admin():
     
     
 @app.route('/login', methods=['POST'])
-def admin():
+def login():
     if request.method == 'POST':
         # Handle login
         print('Login attempt', flush=True)
