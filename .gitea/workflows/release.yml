@@ -6,7 +6,8 @@ on:
     tags:
       - '*'
 
-Build Master:
+jobs:
+  Build Master:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,10 +32,6 @@ Build Master:
           docker push git.woodburn.au/nathanwoodburn/hnshosting-master:release-$tag
           docker tag hnshosting-master:release-$tag git.woodburn.au/nathanwoodburn/hnshosting-master:release
           docker push git.woodburn.au/nathanwoodburn/hnshosting-master:release
-
-          
-
-          
 
   Build Bot:
     runs-on: ubuntu-latest
