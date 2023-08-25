@@ -468,22 +468,18 @@ def home():
     html += "</form>"
 
     html += "<br><h2>Stats</h2><br>"
-    html += "<h2>Workers</h2>"
-    html += "<p>Number of workers: " + str(len(workers)) + "</p>"
-    html += "<p>Workers:</p>"
+    html += "<h3>Workers</h3>"
     html += "<ul>"
     for worker in workers:
         html += "<li>Name: " + worker.split(':')[0] + " | IP: " + worker.split(':')[2].strip('\n') + "</li>"
     html += "</ul>"
-    html += "<h2>Sites</h2>"
-    html += "<p>Number of sites: " + str(len(sites)) + "</p>"
-    html += "<p>Sites:</p>"
+    html += "<h3>Sites</h3>"
+    html += "<p>Total sites: " + str(len(sites)) + "</p>"
     html += "<ul>"
     for site in sites:
         html += "<li>Domain: <a href=\"https://" + site.split(':')[0] + "\" target=\"_blank\">"+site.split(':')[0]+"</a> | Worker: " + site.split(':')[1].strip('\n') + "</li>"
     html += "</ul>"
-    html += "<h2>Licences</h2>"
-    html += "<p>Number of unclaimed licences: " + str(len(licences)) + "</p>"
+    html += "<h3>Number of unclaimed licences: " + str(len(licences)) + "</h3>"
 
     html += "<h2><a href='/admin'>Admin</a></h2>"
     return html
