@@ -107,9 +107,10 @@ def new_site():
 def add_worker():
     worker=request.args.get('worker')
     worker_IP=request.args.get('ip')
+    worker_PRIV=request.args.get('priv')
     # Get API header
     api_key = request.headers.get('key')
-    if api_key == None or worker == None or worker_IP == None:
+    if api_key == None or worker == None or worker_IP == None or worker_PRIV == None:
         return jsonify({'error': 'Invalid API key or worker info', 'success': 'false'})
     if api_key != os.getenv('WORKER_KEY'):
         return jsonify({'error': 'Invalid API key', 'success': 'false'})
@@ -130,11 +131,11 @@ def add_worker():
 
     # Add worker to file
     workers_file = open('/data/workers.txt', 'a')
-    workers_file.write(worker + ":" + worker_IP + '\n')
+    workers_file.write(worker + ":" + worker_PRIV + ":"+ worker_IP + '\n')
     workers_file.close()
 
     online=True
-    resp=requests.get("http://"+worker_IP + ":5000/ping",timeout=2)
+    resp=requests.get("http://"+worker_PRIV + ":5000/ping",timeout=2)
     if (resp.status_code != 200):
         online=False
 
@@ -174,14 +175,14 @@ def list_workers():
         resp=requests.get("http://"+worker.split(':')[1].strip('\n') + ":5000/status",timeout=2)
         if (resp.status_code != 200):
             online=False
-            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': 0, 'status': 'offline'})
+            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[2].strip('\n'), 'online': online, 'sites': 0, 'status': 'offline'})
             continue
         sites = resp.json()['num_sites']
         availability = resp.json()['availability']
         if availability == True:
-            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': sites, 'status': 'ready'})
+            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[2].strip('\n'), 'online': online, 'sites': sites, 'status': 'ready'})
         else:
-            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[1].strip('\n'), 'online': online, 'sites': sites, 'status': 'full'})
+            worker_list.append({'worker': worker.split(':')[0],'ip': worker.split(':')[2].strip('\n'), 'online': online, 'sites': sites, 'status': 'full'})
     
     if len(worker_list) == 0:
         return jsonify({'error': 'No workers available', 'success': 'false'})
@@ -203,17 +204,18 @@ def site_status():
         return jsonify({'error': 'Domain does not exist', 'success': 'false'})
     
     # Get worker ip
-    ip = workerIP(worker)
+    ip = workerIP_PRIV(worker)
 
     # Get TLSA record
     resp=requests.get("http://"+ip + ":5000/tlsa?domain=" + domain,timeout=2)
     json = resp.json()
+    publicIP = workerIP(worker)
 
     if "tlsa" in json:
         tlsa = json['tlsa']
-        return jsonify({'success': 'true', 'domain': domain, 'ip': ip, 'tlsa': tlsa})
+        return jsonify({'success': 'true', 'domain': domain, 'ip': publicIP, 'tlsa': tlsa})
     else:
-        return jsonify({'success': 'false', 'domain': domain, 'ip': ip, 'tlsa': 'none','error': 'No TLSA record found'})
+        return jsonify({'success': 'false', 'domain': domain, 'ip': publicIP, 'tlsa': 'none','error': 'No TLSA record found'})
 
 
 @app.route('/tlsa', methods=['GET'])
@@ -232,7 +234,7 @@ def tlsa():
         return jsonify({'error': 'Domain does not exist', 'success': 'false'})
     
     # Get worker ip
-    ip = workerIP(worker)
+    ip = workerIP_PRIV(worker)
 
     # Get TLSA record
     resp=requests.get("http://"+ip + ":5000/tlsa?domain=" + domain,timeout=2)
@@ -343,6 +345,24 @@ def site_worker(domain):
     sites_file.close()
     return worker
 
+def workerIP_PRIV(worker):
+    # If file doesn't exist, create it
+    try:
+        workers_file = open('/data/workers.txt', 'r')
+    except FileNotFoundError:
+        workers_file = open('/data/workers.txt', 'w')
+        workers_file.close()
+        workers_file = open('/data/workers.txt', 'r')
+
+    ip = None
+    for line in workers_file.readlines():
+        if worker == line.split(':')[0]:
+            ip = line.split(':')[2].strip('\n')
+            break
+
+    workers_file.close()
+    return ip
+    
 def workerIP(worker):
     # If file doesn't exist, create it
     try:
@@ -360,7 +380,6 @@ def workerIP(worker):
 
     workers_file.close()
     return ip
-    
         
 
 # Start the server

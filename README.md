@@ -24,7 +24,7 @@ The bot will be used to provide an easier way to manage the master server.
 After installing the master and discord bot you can use the following commands (as bot owner).
 
 ```
-/addworker <ip> <name>              | add a worker to the master server pool (Make sure the master can access port 5000 on the worker, and don't allow anyone else to access it)
+/addworker <ip> <private ip> <name> | add a worker to the master server pool
 /listworkers                        | list all workers
 /licence                            | Creates a licence key (valid for 1 wp site)
 ```
@@ -90,9 +90,14 @@ screen -dmS hnshosting-worker python3 main.py
 ```
 
 Add worker to master server pool:
+The master server will need to be able to access port 5000 on the worker server over the PRIVATE ip. This is not secured by the api key so make sure you don't allow anyone else to access it.
 
 ```sh
-curl -X POST http://master-server-ip:5000/add-worker?worker=worker-name&ip=worker-server-ip -H "key: api-key"
+curl -X POST http://master-server-ip:5000/add-worker?worker=worker-name&ip=worker-server-ip&priv=worker-server-private-ip -H "key: api-key"
+```
+Alternatively you can use the discord bot to add the worker to the master server pool.
+```
+/addworker <ip> <private ip> <name>
 ```
 
 ## Discord bot install
