@@ -486,8 +486,27 @@ def admin():
         html += "<p>Stripe is enabled</p>"
     
     html += "<br><br><h2>Workers</h2>"
-    for worker in list_workers().json()['workers']:
-        html += "<p>Worker: " + worker['worker'] + " | IP: " + worker['ip'] + " | Status: " + worker['status'] + " | Sites: " + str(worker['sites']) + "</p>"
+    workers = []
+    try:
+        workers_file = open('/data/workers.txt', 'r')
+        workers = workers_file.readlines()
+        workers_file.close()
+    except FileNotFoundError:
+        pass
+
+    for worker in workers:
+        html += "<p>Name: " + worker.split(':')[0] + " | Public IP " + worker.split(':')[2].strip('\n') + " | Private IP " + worker.split(':')[1]
+        # Check worker status
+        online=True
+        resp=requests.get("http://"+worker.split(':')[1].strip('\n') + ":5000/status",timeout=2)
+        if (resp.status_code != 200):
+            online=False
+        if online:
+            html += " | Status: Online | Sites: " + str(resp.json()['num_sites']) + " | Availability: " + str(resp.json()['availability'])
+        else:
+            html += " | Status: Offline"
+        html += "</p>"
+        
 
     html += "<h2>Sites</h2>"
     sites = []
