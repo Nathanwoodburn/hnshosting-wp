@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, make_response, redirect, request, jsonify
 import dotenv
 import os
 import requests
@@ -10,12 +10,14 @@ dotenv.load_dotenv()
 
 app = Flask(__name__)
 
+loggins = []
+
 # API add license key (requires API key in header)
 @app.route('/add-licence', methods=['POST'])
 def add_license():
     # Get API header
     api_key = request.headers.get('key')
-    if api_key != os.getenv('LICENCE-API'):
+    if api_key != os.getenv('LICENCE_KEY'):
         return jsonify({'error': 'Invalid API key', 'success': 'false'})
 
     # Generate licence key
@@ -441,7 +443,35 @@ def home():
     html += "<h2>Licences</h2>"
     html += "<p>Number of licences: " + str(len(licences)) + "</p>"
 
+    html += "<h2>API</h2>"
     return html
+
+# Admin page
+@app.route('/admin',)
+def admin():
+    # Check if logged in
+    loggin_key = request.cookies.get('login_key')
+
+    if request.method == 'POST':
+        # Handle login
+        password = request.form['password']
+        if os.getenv(ADMIN_KEY) == password:
+            # Generate login key
+            login_key = os.urandom(32).hex()
+            loggins.append(login_key)
+            # Set cookie
+            resp = make_response(redirect('/admin'))
+            resp.set_cookie('login_key', login_key)
+            return resp
+
+
+    if loggin_key == None:
+        return "<h1>Admin</h1><br><form action='/admin' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
+    if loggin_key not in loggins:
+        return "<h1>Admin</h1><br><form action='/admin' method='POST'><input type='password' name='Master API'><input type='submit' value='Login'></form>"
+    
+    return "<h1>Admin</h1><br>Logged in"
+    
     
     
     
