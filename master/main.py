@@ -329,7 +329,7 @@ def stripeapi():
             message = "From: " + from_email + "\nTo: " + email + \
                 "\nSubject: Your Licence key\n\nHello,\n\n"\
                 +"This email contains your licence key for your new wordpress site.\n" \
-                +"You can redeem this key via the discord bot or api.\n\n"\
+                +"You can redeem this key via the discord bot or at https://hnshosting.au/register\n\n"\
                 +"Your licence key is: " + licence_key +"\nThanks,\nHNSHosting"
 
             server.sendmail(from_email, email, message)
