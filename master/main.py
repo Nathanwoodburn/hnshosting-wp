@@ -445,11 +445,11 @@ def home():
 # Register page
 @app.route('/register')
 def register():
-    buy_license_link = os.getenv('BUY_LICENSE_LINK')
+    buy_licence_link = os.getenv('BUY_LICENCE_LINK')
 
 
     # Show register template
-    return render_template('register.html', buy_license_link=buy_license_link)
+    return render_template('register.html', buy_licence_link=buy_licence_link)
 
 # Admin page
 @app.route('/admin')
