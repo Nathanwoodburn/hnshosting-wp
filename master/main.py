@@ -442,6 +442,15 @@ def home():
     
     return render_template('index.html', site_count = str(len(sites)))
 
+# Register page
+@app.route('/register')
+def register():
+    buy_license_link = os.getenv('BUY_LICENSE_LINK')
+
+
+    # Show register template
+    return render_template('register.html', buy_license_link=buy_license_link)
+
 # Admin page
 @app.route('/admin')
 def admin():
