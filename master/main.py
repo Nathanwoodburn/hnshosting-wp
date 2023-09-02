@@ -429,17 +429,7 @@ def workerIP(worker):
 # Home page
 @app.route('/')
 def home():
-    # Show stats and info
-    
-    # Get worker info
-    workers = []
-    try:
-        workers_file = open('/data/workers.txt', 'r')
-        workers = workers_file.readlines()
-        workers_file.close()
-    except FileNotFoundError:
-        pass
-
+    # Show index template
     # Get site info
     sites = []
     try:
@@ -449,25 +439,8 @@ def home():
     except FileNotFoundError:
         pass
 
-    # Get licence info
-    licences = []
-    try:
-        licences_file = open('/data/licence_key.txt', 'r')
-        licences = licences_file.readlines()
-        licences_file.close()
-    except FileNotFoundError:
-        pass
-
-    # Create html page
-    workerhtml = ""
-    for worker in workers:
-        workerhtml += "<li>Name: " + worker.split(':')[0] + " | IP: " + worker.split(':')[2].strip('\n') + "</li>"
-    sitehtml = ""
-    for site in sites:
-        sitehtml += "<li>Domain: <a href=\"https://" + site.split(':')[0] + "\" target=\"_blank\">"+site.split(':')[0]+"</a> | Worker: " + site.split(':')[1].strip('\n') + "</li>"
-
     
-    return render_template('index.html', workers=workerhtml, site_count = str(len(sites)), sites = sitehtml, licences = str(len(licences)))
+    return render_template('index.html', site_count = str(len(sites)))
 
 # Admin page
 @app.route('/admin')
