@@ -24,6 +24,21 @@ python3 -m pip install -r requirements.txt
 cp .env.example .env
 chmod +x wp.sh tlsa.sh
 
+# Add proxy to docker
+mkdir ~/.docker
+echo """{
+  \"proxies\": {
+    \"default\": {
+      \"httpProxy\": \"http://proxy.hnsproxy.au:80\",
+      \"httpsProxy\": \"https://proxy.hnsproxy.au:443\",
+      \"noProxy\": \"localhost\"
+    }
+  }
+}""" > ~/.docker/config.json
+
+# Restart docker
+sudo systemctl restart docker
+
 # Pull docker images to save time later
 docker pull mysql:5.7 &
 docker pull wordpress:latest &

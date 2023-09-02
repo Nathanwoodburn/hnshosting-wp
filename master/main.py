@@ -1,4 +1,4 @@
-from flask import Flask, make_response, redirect, request, jsonify
+from flask import Flask, make_response, redirect, request, jsonify, render_template, send_from_directory
 import dotenv
 import os
 import requests
@@ -329,7 +329,7 @@ def stripeapi():
             message = "From: " + from_email + "\nTo: " + email + \
                 "\nSubject: Your Licence key\n\nHello,\n\n"\
                 +"This email contains your licence key for your new wordpress site.\n" \
-                +"You can redeem this key via the discord bot or api.\n\n"\
+                +"You can redeem this key via the discord bot or at https://hnshosting.au/register\n\n"\
                 +"Your licence key is: " + licence_key +"\nThanks,\nHNSHosting"
 
             server.sendmail(from_email, email, message)
@@ -429,17 +429,7 @@ def workerIP(worker):
 # Home page
 @app.route('/')
 def home():
-    # Show stats and info
-    
-    # Get worker info
-    workers = []
-    try:
-        workers_file = open('/data/workers.txt', 'r')
-        workers = workers_file.readlines()
-        workers_file.close()
-    except FileNotFoundError:
-        pass
-
+    # Show index template
     # Get site info
     sites = []
     try:
@@ -449,44 +439,17 @@ def home():
     except FileNotFoundError:
         pass
 
-    # Get licence info
-    licences = []
-    try:
-        licences_file = open('/data/licence_key.txt', 'r')
-        licences = licences_file.readlines()
-        licences_file.close()
-    except FileNotFoundError:
-        pass
+    
+    return render_template('index.html', site_count = str(len(sites)))
 
-    # Create html page
-    html = "<h1>Welcome</h1><br>"
-    html += "<h2>Create a site</h2>"
-    html += "<form action='/add-site' method='POST'>"
-    html += "<p>Domain: <input type='text' name='domain'></p>"
-    html += "<p>Licence key: <input type='text' name='licence'></p>"
-    html += "<input type='submit' value='Create site'>"
-    html += "</form>"
+# Register page
+@app.route('/register')
+def register():
+    buy_licence_link = os.getenv('BUY_LICENCE_LINK')
 
-    html += "<br><h2>Stats</h2><br>"
-    html += "<h2>Workers</h2>"
-    html += "<p>Number of workers: " + str(len(workers)) + "</p>"
-    html += "<p>Workers:</p>"
-    html += "<ul>"
-    for worker in workers:
-        html += "<li>Name: " + worker.split(':')[0] + " | IP " + worker.split(':')[2].strip('\n') + "</li>"
-    html += "</ul>"
-    html += "<h2>Sites</h2>"
-    html += "<p>Number of sites: " + str(len(sites)) + "</p>"
-    html += "<p>Sites:</p>"
-    html += "<ul>"
-    for site in sites:
-        html += "<li>Domain: " + site.split(':')[0] + " | Worker: " + site.split(':')[1].strip('\n') + "</li>"
-    html += "</ul>"
-    html += "<h2>Licences</h2>"
-    html += "<p>Number of licences: " + str(len(licences)) + "</p>"
 
-    html += "<h2><a href='/admin'>Admin</a></h2>"
-    return html
+    # Show register template
+    return render_template('register.html', buy_licence_link=buy_licence_link)
 
 # Admin page
 @app.route('/admin')
@@ -780,8 +743,12 @@ def login():
 def failed_login():
     return "<h1>Failed login</h1><br><form action='/login' method='POST'><input type='password' name='password'><input type='submit' value='Login'></form>"
 
-
+# Assets
+@app.route('/assets/<path:path>')
+def send_report(path):
+    return send_from_directory('templates/assets', path)
     
+
 
 
 # Start the server

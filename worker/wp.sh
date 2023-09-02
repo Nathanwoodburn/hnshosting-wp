@@ -56,9 +56,11 @@ services:
       WORDPRESS_DB_PASSWORD: $MYSQL_PASSWORD
       WORDPRESS_DB_NAME: WordPressDatabase
     volumes:
-      [\"./:/var/www/html\"]
+      - data:/var/www/html
+    
 volumes:
-  mysql: {}
+  mysql:
+  data:
 """ > docker-compose.yml
 
 # Start the containers
