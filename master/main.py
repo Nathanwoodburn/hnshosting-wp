@@ -737,8 +737,9 @@ def failed_login():
 # Assets
 @app.route('/assets/<path:path>')
 def send_report(path):
-    return send_from_directory('assets', path)
+    return send_from_directory('templates/assets', path)
     
+
 
 
 # Start the server
