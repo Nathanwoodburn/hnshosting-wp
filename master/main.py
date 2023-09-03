@@ -443,13 +443,120 @@ def home():
     return render_template('index.html', site_count = str(len(sites)))
 
 # Register page
-@app.route('/register')
+@app.route('/register', methods=['GET'])
 def register():
     buy_licence_link = os.getenv('BUY_LICENCE_LINK')
 
-
     # Show register template
-    return render_template('register.html', buy_licence_link=buy_licence_link)
+    return render_template('register.html', buy_licence_link=buy_licence_link, ERROR_MESSAGE="")
+
+@app.route('/register', methods=['POST'])
+def register_post():
+    buy_licence_link = os.getenv('BUY_LICENCE_LINK')
+    if 'licence' not in request.form:
+        return render_template('register.html', buy_licence_link=buy_licence_link, ERROR_MESSAGE="No licence key provided")
+        
+    licence_key = request.form['licence']
+    # Check if licence key is valid
+    key_file = open('/data/licence_key.txt', 'r')
+    valid_key = False
+    for line in key_file.readlines():
+        if licence_key == line.strip('\n'):
+            valid_key = True
+            break
+    key_file.close()
+    if not valid_key:
+        return render_template('register.html', buy_licence_link=buy_licence_link, ERROR_MESSAGE="Invalid licence key")
+    
+    # Get domain
+    domain = request.form['domain']
+    if domain == None:
+        return render_template('register.html', buy_licence_link=buy_licence_link, ERROR_MESSAGE="No domain provided")
+    # Check if domain already exists
+    if site_exists(domain):
+        return render_template('register.html', buy_licence_link=buy_licence_link, ERROR_MESSAGE="Domain already exists")
+
+    # Check if domain contains http:// or https://
+    if domain.startswith("http://") or domain.startswith("https://"):
+        return render_template('register.html', buy_licence_link=buy_licence_link, ERROR_MESSAGE="Domain should not contain http:// or https://")
+    
+    # Check if worker file exists
+    workers = None
+    try:
+        worker_file = open('/data/workers.txt', 'r')
+        workers = worker_file.readlines()
+        worker_file.close()
+    except FileNotFoundError:
+        return render_template('register.html', buy_licence_link=buy_licence_link, ERROR_MESSAGE="No workers available\nPlease contact support")
+    
+    # Get a worker that has available slots
+    worker = None
+    for line in workers:
+        if not line.__contains__(':'):
+            continue
+        ip = line.split(':')[1].strip('\n')
+        resp=requests.get("http://"+ip + ":5000/status",timeout=2)
+        if (resp.status_code == 200):
+            if resp.json()['availability'] == True:
+                worker = line
+                break
+
+    if worker == None:
+        return render_template('register.html', buy_licence_link=buy_licence_link, ERROR_MESSAGE="No workers available\nPlease contact support")
+    
+    # Delete licence key
+    key_file = open('/data/licence_key.txt', 'r')
+    lines = key_file.readlines()
+    key_file.close()
+    key_file = open('/data/licence_key.txt', 'w')
+    for line in lines:
+        if line.strip("\n") != licence_key:
+            key_file.write(line)
+    key_file.close()
+    
+    # Add domain to file
+    sites_file = open('/data/sites.txt', 'a')
+    sites_file.write(domain + ':' + worker.split(':')[0] + '\n')
+    sites_file.close()
+
+    # Send worker request
+    requests.post("http://"+ worker.split(':')[1].strip('\n') + ":5000/new-site?domain=" + domain)
+
+    return redirect('/success?domain=' + domain + '&status=creating')
+
+@app.route('/success')
+def success():
+    if 'domain' not in request.args:
+        return redirect('/')
+    domain = request.args.get('domain')
+    if not site_exists(domain):
+        return render_template('success.html', message="Error: Domain does not exist\nPlease contact support")
+    
+    if 'status' not in request.args:
+        # Get worker
+        worker = site_worker(domain)
+        if worker == None:
+            return render_template('success.html', message="Error: Domain does not exist\nPlease contact support")
+        # Get worker ip
+        ip = workerIP_PRIV(worker)
+
+        # Get TLSA record
+        resp=requests.get("http://"+ip + ":5000/tlsa?domain=" + domain,timeout=2)
+        json = resp.json()
+        publicIP = workerIP(worker)
+
+        if "tlsa" in json:
+            tlsa = json['tlsa']
+            return render_template('success.html', message="Success\nDomain: " + domain + "\nIP: " + publicIP + "\nTLSA: " + tlsa + "\nMake sure to add the TLSA record to `_443._tcp." + domain + "` or `*." + domain + "`")
+        else:
+            return render_template('success.html', message="Success\nDomain: " + domain + "\nIP: " + publicIP + "\nTLSA: Pending\nNo TLSA record found")
+        
+    elif request.args.get('status') == 'creating':
+        return render_template('success.html')
+    
+    
+    
+
 
 # Admin page
 @app.route('/admin')
