@@ -10,7 +10,7 @@ on:
 
 jobs:
   Build Master:
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest, arm]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -51,7 +51,7 @@ jobs:
           
 
   Build Bot:
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest, arm]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
