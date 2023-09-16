@@ -206,6 +206,7 @@ def list_workers():
 @app.route('/site-info', methods=['GET'])
 def site_status():
     domain = request.args.get('domain')
+    domain = domain.lower()
     if domain == None:
         return jsonify({'error': 'Invalid domain', 'success': 'false'})
     
@@ -236,6 +237,7 @@ def site_status():
 @app.route('/info')
 def site_status_human():
     domain = request.args.get('domain')
+    domain = domain.lower()
     if domain == None:
         return "<h1>Invalid domain</h1>"
     
@@ -265,6 +267,7 @@ def site_status_human():
 @app.route('/tlsa', methods=['GET'])
 def tlsa():
     domain = request.args.get('domain')
+    domain = domain.lower()
     if domain == None:
         return jsonify({'error': 'Invalid domain', 'success': 'false'})
     
@@ -480,6 +483,9 @@ def register_post():
     if domain.startswith("http://") or domain.startswith("https://"):
         return render_template('register.html', buy_licence_link=buy_licence_link, ERROR_MESSAGE="Domain should not contain http:// or https://")
     
+    # Set domain to lowercase
+    domain = domain.lower()
+
     # Check if worker file exists
     workers = None
     try:
@@ -529,6 +535,7 @@ def success():
     if 'domain' not in request.args:
         return redirect('/')
     domain = request.args.get('domain')
+    domain = domain.lower()
     if not site_exists(domain):
         return render_template('success.html', message="Error: Domain does not exist\nPlease contact support")
     
@@ -711,7 +718,7 @@ def addsite():
     if domain.startswith("http://") or domain.startswith("https://"):
         return jsonify({'error': 'Domain should not contain http:// or https://', 'success': 'false'})
     
-
+    domain = domain.lower()
     # Check if worker file exists
     workers = None
     try:
