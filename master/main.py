@@ -251,7 +251,7 @@ def site_status_human():
     # Get worker ip
     ip = workerIP_PRIV(worker)
 
-    # Get TLSA record
+    # Get TLSA record    
     resp=requests.get("http://"+ip + ":5000/tlsa?domain=" + domain,timeout=2)
     json = resp.json()
     publicIP = workerIP(worker)
@@ -401,7 +401,7 @@ def workerIP_PRIV(worker):
     ip = None
     for line in workers_file.readlines():
         if worker == line.split(':')[0]:
-            ip = line.split(':')[2].strip('\n')
+            ip = line.split(':')[1].strip('\n')
             break
 
     workers_file.close()
@@ -419,7 +419,7 @@ def workerIP(worker):
     ip = None
     for line in workers_file.readlines():
         if worker == line.split(':')[0]:
-            ip = line.split(':')[1].strip('\n')
+            ip = line.split(':')[2].strip('\n')
             break
 
     workers_file.close()
