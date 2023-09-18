@@ -562,7 +562,10 @@ def success():
         return render_template('success.html')
     
     
-    
+@app.route('/site-count')
+def site_count_route():
+    return str(get_sites_count())
+
 
 
 # Admin page
