@@ -131,7 +131,7 @@ async def check_site_ready(domain):
     else:
         return False
     
-def site_count():
+def get_site_count():
     r = requests.get(f"http://{Master_IP}:{Master_Port}/site-count")
     if r.status_code == 200:
         return r.text
@@ -139,7 +139,7 @@ def site_count():
         return "Error getting site count\n" + r.text
 
 def update_bot_status():
-    site_count = site_count()
+    site_count = get_site_count()
     client.loop.create_task(client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over " + site_count + " wordpress sites")))
 
 # When the bot is ready
@@ -150,7 +150,7 @@ async def on_ready():
     await tree.sync()
 
     # Get the number of sites
-    site_count = site_count()
+    site_count = get_site_count()
     await client.loop.create_task(client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over " + site_count + " wordpress sites")))
 
 client.run(TOKEN)   
