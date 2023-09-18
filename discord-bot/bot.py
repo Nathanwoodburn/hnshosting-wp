@@ -51,6 +51,7 @@ async def listworkers(ctx):
             await ctx.response.send_message(f"Error listing workers\n" + r.text,ephemeral=True)
     else:
         await ctx.response.send_message("You do not have permission to use this command",ephemeral=True)
+    update_bot_status()
 
 @tree.command(name="licence", description="Gets a licence key")
 async def license(ctx):
@@ -104,6 +105,7 @@ async def createsite(ctx, domain: str, licence: str = None):
             await ctx.response.send_message(f"Error creating site\n" + json['error'])
     else:
         await ctx.response.send_message(f"Error creating site\n" + r.text)
+    update_bot_status()
 
 
 @tree.command(name="siteinfo", description="Get info about a WordPress site")
@@ -128,6 +130,17 @@ async def check_site_ready(domain):
             return False
     else:
         return False
+    
+def site_count():
+    r = requests.get(f"http://{Master_IP}:{Master_Port}/site-count")
+    if r.status_code == 200:
+        return r.text
+    else:
+        return "Error getting site count\n" + r.text
+
+def update_bot_status():
+    site_count = site_count()
+    client.loop.create_task(client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over " + site_count + " wordpress sites")))
 
 # When the bot is ready
 @client.event
@@ -135,6 +148,9 @@ async def on_ready():
     global ADMINID
     ADMINID = client.application.owner.id
     await tree.sync()
-    await client.loop.create_task(client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over HNSHosting wordpress")))
+
+    # Get the number of sites
+    site_count = site_count()
+    await client.loop.create_task(client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over " + site_count + " wordpress sites")))
 
 client.run(TOKEN)   
