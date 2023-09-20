@@ -532,7 +532,7 @@ def success():
     
 @app.route('/info')
 def info():
-    success()
+    return success()
 
 @app.route('/site-count')
 def site_count_route():
