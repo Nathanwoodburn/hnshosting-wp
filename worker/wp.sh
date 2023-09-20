@@ -43,6 +43,8 @@ services:
       MYSQL_DATABASE: WordPressDatabase
       MYSQL_USER: WordPressUser
       MYSQL_PASSWORD: $MYSQL_PASSWORD
+    volumes:
+      - mysql:/var/lib/mysql
   wordpress:
     depends_on:
       - ${DOMAIN}db
