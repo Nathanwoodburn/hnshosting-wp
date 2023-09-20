@@ -233,37 +233,6 @@ def site_status():
     else:
         return jsonify({'success': 'false', 'domain': domain, 'ip': publicIP, 'tlsa': 'none','error': 'No TLSA record found'})
 
-
-@app.route('/info')
-def site_status_human():
-    domain = request.args.get('domain')
-    domain = domain.lower()
-    if domain == None:
-        return "<h1>Invalid domain</h1>"
-    
-    # Check if domain exists
-    if not site_exists(domain):
-        return "<h1>Domain does not exist</h1>"
-    
-    # Get worker
-    worker = site_worker(domain)
-    if worker == None:
-        return "<h1>Domain does not exist</h1>"
-    
-    # Get worker ip
-    ip = workerIP_PRIV(worker)
-
-    # Get TLSA record    
-    resp=requests.get("http://"+ip + ":5000/tlsa?domain=" + domain,timeout=2)
-    json = resp.json()
-    publicIP = workerIP(worker)
-
-    if "tlsa" in json:
-        tlsa = json['tlsa']
-        return "<h1>Domain: " + domain + "</h1><br><p>IP: " + publicIP + "</p><br><p>TLSA: " + tlsa + "</p><br><p>Make sure to add the TLSA record to `_443._tcp." + domain + "` or `*." + domain + "`</p>"
-    else:
-        return "<h1>Domain: " + domain + "</h1><br><p>IP: " + publicIP + "</p><br><p>TLSA: none</p><br><p>No TLSA record found</p>"
-
 @app.route('/tlsa', methods=['GET'])
 def tlsa():
     domain = request.args.get('domain')
@@ -561,7 +530,10 @@ def success():
     elif request.args.get('status') == 'creating':
         return render_template('success.html')
     
-    
+@app.route('/info')
+def info():
+    success()
+
 @app.route('/site-count')
 def site_count_route():
     return str(get_sites_count())
@@ -648,7 +620,7 @@ def admin():
         if not site.__contains__(':'):
             continue
         domain = site.split(':')[0]
-        html += "<p>Domain: <a href='https://"+ domain + "'>" + domain + "</a> | Worker: " + site.split(':')[1].strip('\n') + " | <a href='/info?domain=" + domain + "'>Info</a></p>"
+        html += "<p>Domain: <a href='https://"+ domain + "'>" + domain + "</a> | Worker: " + site.split(':')[1].strip('\n') + " | <a href='/status?domain=" + domain + "'>Info</a></p>"
 
     html += "<br><br>"
     # Form to add worker
