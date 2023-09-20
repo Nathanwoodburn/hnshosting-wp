@@ -523,9 +523,9 @@ def success():
 
         if "tlsa" in json:
             tlsa = json['tlsa']
-            return render_template('success.html', title="Your site is ready!",message="Success<br>Domain: " + domain + "<br>IP: " + publicIP + "<br>TLSA: " + tlsa + "<br>Make sure to add the TLSA record to <code>_443._tcp." + domain + "</code> or <code>*." + domain + "</code>")
+            return render_template('success.html', title="Your site is ready!",message="Success<br>Domain: <code>" + domain + "</code><br>IP: <code>" + publicIP + "</code><br>TLSA: <code>" + tlsa + "</code><br>Make sure to add the TLSA record to <code>_443._tcp." + domain + "</code> or <code>*." + domain + "</code>")
         else:
-            return render_template('success.html', title="Your site is installing.<br>Please wait...",message="Domain: " + domain + "<br>IP: " + publicIP + "<br>TLSA: Pending<br>No TLSA record found")
+            return render_template('success.html', title="Your site is installing.<br>Please wait...",message="Domain: <code>" + domain + "</code><br>IP: <code>" + publicIP + "</code><br>TLSA: Pending<br>No TLSA record found")
         
     elif request.args.get('status') == 'creating':
         return render_template('success.html')
