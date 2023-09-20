@@ -44,8 +44,8 @@ def tlsa():
         tlsa_file = open('wordpress-'+domain+'/tlsa.txt', 'r')
         tlsa = tlsa_file.readlines()
         tlsa_file.close()
-    except FileNotFoundError:
-        return jsonify({'error': 'TLSA record not found', 'success': 'false'})
+    except FileNotFoundError as e:
+        return jsonify({'error': 'TLSA record not found', 'success': 'false', 'ex': str(e)})
 
     # Remove newlines
     tlsa = tlsa[0].strip('\n')
