@@ -537,13 +537,13 @@ def success():
     domain = request.args.get('domain')
     domain = domain.lower()
     if not site_exists(domain):
-        return render_template('success.html', message="Error: Domain does not exist\nPlease contact support")
+        return render_template('success.html', title="Your site is installing.<br>Please wait...",message="")
     
     if 'status' not in request.args:
         # Get worker
         worker = site_worker(domain)
         if worker == None:
-            return render_template('success.html', message="Error: Domain does not exist\nPlease contact support")
+            return render_template('success.html', title="Your site is installing.<br>Please wait...",message="Error: Domain does not exist<br>Please contact support")
         # Get worker ip
         ip = workerIP_PRIV(worker)
 
@@ -554,9 +554,9 @@ def success():
 
         if "tlsa" in json:
             tlsa = json['tlsa']
-            return render_template('success.html', message="Success\nDomain: " + domain + "\nIP: " + publicIP + "\nTLSA: " + tlsa + "\nMake sure to add the TLSA record to `_443._tcp." + domain + "` or `*." + domain + "`")
+            return render_template('success.html', title="Your site is ready!",message="Success<br>Domain: " + domain + "<br>IP: " + publicIP + "<br>TLSA: " + tlsa + "<br>Make sure to add the TLSA record to `_443._tcp." + domain + "` or `*." + domain + "`")
         else:
-            return render_template('success.html', message="Success\nDomain: " + domain + "\nIP: " + publicIP + "\nTLSA: Pending\nNo TLSA record found")
+            return render_template('success.html', title="Your site is installing.<br>Please wait...",message="Domain: " + domain + "<br>IP: " + publicIP + "<br>TLSA: Pending<br>No TLSA record found")
         
     elif request.args.get('status') == 'creating':
         return render_template('success.html')
