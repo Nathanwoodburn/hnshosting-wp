@@ -71,6 +71,14 @@ async def license(ctx):
 
 @tree.command(name="createsite", description="Create a new WordPress site")
 async def createsite(ctx, domain: str, licence: str = None):
+    # Verify domain is valid
+    if domain == None:
+        await ctx.response.send_message("You must specify a domain",ephemeral=True)
+        return
+    if "http://" in domain or "https://" in domain:
+        await ctx.response.send_message("You must specify a domain without http:// or https://",ephemeral=True)
+        return
+
     if FREE_LICENCE == True: # If free licences are enabled then auto generate a licence
         r = requests.post(f"http://{Master_IP}:{Master_Port}/add-licence",headers={"key":os.getenv('LICENCE_KEY')})
         if r.status_code == 200:
@@ -80,12 +88,12 @@ async def createsite(ctx, domain: str, licence: str = None):
             else:
                 await ctx.response.send_message(f"Error getting license\n" + json['error'])
                 return
-        
+
     r = requests.post(f"http://{Master_IP}:{Master_Port}/new-site?domain={domain}",headers={"key":licence})
     if r.status_code == 200:
         json = r.json()
         if json['success'] == "true":
-            await ctx.response.send_message(f"Site {domain} creating...\nI'll send you a message when it's ready")
+            await ctx.response.send_message(f"Site https://{domain} creating...\nI'll send you a message when it's ready")
 
             ready = False
             while ready == False:
@@ -96,7 +104,7 @@ async def createsite(ctx, domain: str, licence: str = None):
             r = requests.get(f"http://{Master_IP}:{Master_Port}/site-info?domain={domain}")
             json = r.json()
             if json['success'] == "true":
-                await ctx.user.send(f"Site {domain} is ready!\nHere is the site info for {json['domain']}\nA: `{json['ip']}`\nTLSA: `{json['tlsa']}`\nMake sure you put the TLSA in either `_443._tcp.{domain}` or `*.{domain}`")
+                await ctx.user.send(f"Site https://{domain} is ready!\nHere is the site info for {json['domain']}\nA: `{json['ip']}`\nTLSA: `{json['tlsa']}`\nMake sure you put the TLSA in either `_443._tcp.{domain}` or `*.{domain}`")
             else:
                 await ctx.user.send(f"Error getting site info\n" + json['error'])
 
