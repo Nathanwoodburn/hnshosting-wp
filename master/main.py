@@ -500,6 +500,7 @@ def register_post():
     return redirect('/success?domain=' + domain + '&status=creating')
 
 @app.route('/success')
+@app.route('/info')
 def success():
     if 'domain' not in request.args:
         return redirect('/')
@@ -529,10 +530,7 @@ def success():
         
     elif request.args.get('status') == 'creating':
         return render_template('success.html')
-    
-@app.route('/info')
-def info():
-    return success()
+
 
 @app.route('/site-count')
 def site_count_route():
