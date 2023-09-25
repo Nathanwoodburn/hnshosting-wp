@@ -618,7 +618,7 @@ def admin():
         if not site.__contains__(':'):
             continue
         domain = site.split(':')[0]
-        html += "<p>Domain: <a href='https://"+ domain + "'>" + domain + "</a> | Worker: " + site.split(':')[1].strip('\n') + " | <a href='/status?domain=" + domain + "'>Info</a></p>"
+        html += "<p>Domain: <a href='https://"+ domain + "'>" + domain + "</a> | Worker: " + site.split(':')[1].strip('\n') + " | <a href='/info?domain=" + domain + "'>Info</a></p>"
 
     html += "<br><br>"
     # Form to add worker
