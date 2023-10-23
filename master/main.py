@@ -233,37 +233,6 @@ def site_status():
     else:
         return jsonify({'success': 'false', 'domain': domain, 'ip': publicIP, 'tlsa': 'none','error': 'No TLSA record found'})
 
-
-@app.route('/info')
-def site_status_human():
-    domain = request.args.get('domain')
-    domain = domain.lower()
-    if domain == None:
-        return "<h1>Invalid domain</h1>"
-    
-    # Check if domain exists
-    if not site_exists(domain):
-        return "<h1>Domain does not exist</h1>"
-    
-    # Get worker
-    worker = site_worker(domain)
-    if worker == None:
-        return "<h1>Domain does not exist</h1>"
-    
-    # Get worker ip
-    ip = workerIP_PRIV(worker)
-
-    # Get TLSA record    
-    resp=requests.get("http://"+ip + ":5000/tlsa?domain=" + domain,timeout=2)
-    json = resp.json()
-    publicIP = workerIP(worker)
-
-    if "tlsa" in json:
-        tlsa = json['tlsa']
-        return "<h1>Domain: " + domain + "</h1><br><p>IP: " + publicIP + "</p><br><p>TLSA: " + tlsa + "</p><br><p>Make sure to add the TLSA record to `_443._tcp." + domain + "` or `*." + domain + "`</p>"
-    else:
-        return "<h1>Domain: " + domain + "</h1><br><p>IP: " + publicIP + "</p><br><p>TLSA: none</p><br><p>No TLSA record found</p>"
-
 @app.route('/tlsa', methods=['GET'])
 def tlsa():
     domain = request.args.get('domain')
@@ -531,19 +500,20 @@ def register_post():
     return redirect('/success?domain=' + domain + '&status=creating')
 
 @app.route('/success')
+@app.route('/info')
 def success():
     if 'domain' not in request.args:
         return redirect('/')
     domain = request.args.get('domain')
     domain = domain.lower()
     if not site_exists(domain):
-        return render_template('success.html', message="Error: Domain does not exist\nPlease contact support")
+        return render_template('success.html', title="Your site is installing.<br>Please wait...",message="")
     
     if 'status' not in request.args:
         # Get worker
         worker = site_worker(domain)
         if worker == None:
-            return render_template('success.html', message="Error: Domain does not exist\nPlease contact support")
+            return render_template('success.html', title="Your site is installing.<br>Please wait...",message="Error: Domain does not exist<br>Please contact support")
         # Get worker ip
         ip = workerIP_PRIV(worker)
 
@@ -554,14 +524,14 @@ def success():
 
         if "tlsa" in json:
             tlsa = json['tlsa']
-            return render_template('success.html', message="Success\nDomain: " + domain + "\nIP: " + publicIP + "\nTLSA: " + tlsa + "\nMake sure to add the TLSA record to `_443._tcp." + domain + "` or `*." + domain + "`")
+            return render_template('success.html', title="Your site is ready!",message="Success<br>Domain: <code>" + domain + "</code><br>IP: <code>" + publicIP + "</code><br>TLSA: <code>" + tlsa + "</code><br>Make sure to add the TLSA record to <code>_443._tcp." + domain + "</code> or <code>*." + domain + "</code>")
         else:
-            return render_template('success.html', message="Success\nDomain: " + domain + "\nIP: " + publicIP + "\nTLSA: Pending\nNo TLSA record found")
+            return render_template('success.html', title="Your site is installing.<br>Please wait...",message="Domain: <code>" + domain + "</code><br>IP: <code>" + publicIP + "</code><br>TLSA: Pending<br>No TLSA record found")
         
     elif request.args.get('status') == 'creating':
         return render_template('success.html')
-    
-    
+
+
 @app.route('/site-count')
 def site_count_route():
     return str(get_sites_count())
