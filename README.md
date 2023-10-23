@@ -116,3 +116,14 @@ This will allow you to create a wordpress site without using a licence key using
 ```
 FREE_MODE: true
 ```
+
+
+## Hip2
+HIP2 allows sending HNS to a domain.
+To enable HIP2 on your wordpress site you should
+
+1. Download the [HIP2 plugin](https://git.woodburn.au/nathanwoodburn/hnshosting-wp/raw/branch/main/assets/hns-wallet-plugin.zip)
+2. Upload the plugin to your wordpress site
+3. Activate the plugin
+4. Go to the settings page and enter your HNS wallet address
+5. Ensure it works by settings the permalink to post name and saving
