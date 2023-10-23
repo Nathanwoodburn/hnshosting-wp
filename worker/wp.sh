@@ -89,6 +89,12 @@ printf "server {
     sub_filter_once on;
 
   }
+  location = /.well-known/wallets/HNS {
+    proxy_pass $URL;
+    proxy_set_header Host \$http_host;
+    rewrite ^(.*)$ \$1/ break;
+  }
+
 
     listen 443 ssl;
     ssl_certificate /etc/ssl/$DOMAIN.crt;
