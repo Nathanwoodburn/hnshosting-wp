@@ -277,7 +277,14 @@ def stripeapi():
         return jsonify({'success': 'false'})
     
     if event.type == 'payment_intent.succeeded':
+        # Only for payments for licences
         payment_intent = event.data.object
+        if payment_intent['amount'] != 1000:
+            return jsonify({'success': 'true'})
+        
+        if payment_intent['description'] != "Subscription creation":
+            return jsonify({'success': 'true'})
+
         # Get email
         email = payment_intent['receipt_email']
         # Create licence key
