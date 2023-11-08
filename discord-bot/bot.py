@@ -104,7 +104,10 @@ async def createsite(ctx, domain: str, licence: str = None):
             r = requests.get(f"http://{Master_IP}:{Master_Port}/site-info?domain={domain}")
             json = r.json()
             if json['success'] == "true":
-                await ctx.user.send(f"Site https://{domain} is ready!\nHere is the site info for {json['domain']}\nA: `{json['ip']}`\nTLSA: `{json['tlsa']}`\nMake sure you put the TLSA in either `_443._tcp.{domain}` or `*.{domain}`")
+                if json['ip'] == '143.42.45.236':
+                    await ctx.user.send(f"Site https://{domain} is ready!\nHere is the site info for {json['domain']}\nALIAS: `01.hnshosting.au`\nTLSA: `{json['tlsa']}`\nMake sure you put the TLSA in either `_443._tcp.{domain}` or `*.{domain}`")
+                else:
+                    await ctx.user.send(f"Site https://{domain} is ready!\nHere is the site info for {json['domain']}\nA: `{json['ip']}`\nTLSA: `{json['tlsa']}`\nMake sure you put the TLSA in either `_443._tcp.{domain}` or `*.{domain}`")
             else:
                 await ctx.user.send(f"Error getting site info\n" + json['error'])
 
