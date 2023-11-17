@@ -1,12 +1,10 @@
-// Wait for 10 seconds
+// Refresh page without status arg
+
+// Wait 10 seconds
 setTimeout(function() {
-    // Get the 'domain' parameter from the current URL
-    var urlParams = new URLSearchParams(window.location.search);
+    // Refresh page
+    // Get domain from param
     var domain = urlParams.get('domain');
 
-    // Construct the new URL with the 'domain' parameter
-    var newURL = "https://hnshosting.au/info?domain=" + domain;
-
-    // Redirect to the new URL
-    window.location.href = newURL;
+    window.location = "https://hnshosting.au/success?domain=" + domain;
 }, 10000);

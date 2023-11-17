@@ -843,6 +843,15 @@ def send_report(path):
     return send_from_directory('templates/assets', path)
     
 
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+# 404 route
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 
 
 # Start the server

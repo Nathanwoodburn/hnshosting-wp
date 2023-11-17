@@ -24,7 +24,7 @@
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link" href="register">Register Site</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/register">Register Site</a></li>
                 </ul>
             </div>
         </div>
@@ -35,18 +35,16 @@
                 <div class="col-md-8 col-xl-6 text-center text-md-start mx-auto">
                     <div class="text-center">
                         <p class="fw-bold text-success mb-2">Success</p>
-                        <h1 class="fw-bold">{{title| safe}}</h1>
+                        <h1 class="fw-bold">{{title | safe}</h1></div><p class="text-center">{{message | safe}}</p>
                     </div>
-                    <p class="text-center">{{message | safe}}</p>
                 </div>
             </div>
-        </div>
     </header>
     <footer class="bg-dark">
         <div class="container py-4 py-lg-5">
             <hr>
             <div class="text-muted d-flex justify-content-between align-items-center pt-3">
-                <p class="mb-0">Copyright © 2023 HNSHosting</p>
+                <p class="mb-0">Copyright © 2023 HNSHosting</p><a href="/terms">Terms &amp; Privacy</a>
             </div>
         </div>
     </footer>
