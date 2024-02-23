@@ -15,21 +15,7 @@
     <link rel="icon" type="image/png" sizes="508x430" href="assets/img/favicon.png">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
-<!-- Matomo -->
-<script>
-  var _paq = window._paq = window._paq || [];
-  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="https://analytics.woodburn.au/";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', '6']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-  })();
-</script>
-<!-- End Matomo Code -->
+<script async src="https://umami.woodburn.au/script.js" data-website-id="fc32daf3-6932-44ee-bbee-f853ce85d5f5"></script>
 </head>
 
 <body style="height: 100%;">
@@ -50,7 +36,7 @@
                 <div class="col-md-8 col-xl-6 text-center text-md-start mx-auto">
                     <div class="text-center">
                         <p class="fw-bold text-success mb-2">Success</p>
-                        <h1 class="fw-bold">{{title | safe}}</h1></div><p class="text-center">{{message | safe}}</p>
+                        <h1 class="fw-bold">{{title | safe}</h1></div><p class="text-center">{{message | safe}}</p>
                     </div>
                 </div>
             </div>
