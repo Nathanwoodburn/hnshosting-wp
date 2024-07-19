@@ -699,6 +699,13 @@ def addsite():
         return jsonify({'error': 'Domain should not contain http:// or https://', 'success': 'false'})
     
     domain = domain.lower()
+
+    # Remove any trailing / or .
+    if domain.endswith('/'):
+        domain = domain.removesuffix('/')
+    if domain.endswith('.'):
+        domain = domain.removesuffix('.')
+
     # Check if worker file exists
     workers = None
     try:
