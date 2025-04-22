@@ -4,6 +4,7 @@ import discord
 from discord import app_commands
 import requests
 import asyncio
+import re
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -77,6 +78,12 @@ async def createsite(ctx, domain: str, licence: str = None):
         return
     if "http://" in domain or "https://" in domain:
         await ctx.response.send_message("You must specify a domain without http:// or https://",ephemeral=True)
+        return
+
+    domain = domain.lower().trim()
+    # Regex for a domain (or a tld)
+    if not re.match(r'^[a-z0-9-]+(\.[a-z0-9-]+)*$', domain):
+        await ctx.response.send_message("You must specify a valid domain",ephemeral=True)
         return
 
     if FREE_LICENCE == True: # If free licences are enabled then auto generate a licence
