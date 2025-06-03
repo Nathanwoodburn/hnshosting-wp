@@ -80,7 +80,7 @@ async def createsite(ctx, domain: str, licence: str = None):
         await ctx.response.send_message("You must specify a domain without http:// or https://",ephemeral=True)
         return
 
-    domain = domain.lower().trim()
+    domain = domain.lower().strip()
     # Regex for a domain (or a tld)
     if not re.match(r'^[a-z0-9-]+(\.[a-z0-9-]+)*$', domain):
         await ctx.response.send_message("You must specify a valid domain",ephemeral=True)
